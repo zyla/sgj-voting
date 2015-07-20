@@ -37,5 +37,6 @@ instance YesodPersist App where
 makeApp :: IO App
 makeApp = runStderrLoggingT $ App <$> openConnectionPool
   where
-    openConnectionPool = createPostgresqlPool "" poolSize
+    openConnectionPool = createPostgresqlPool connString poolSize
+    connString = "dbname=slavic"
     poolSize = 10
