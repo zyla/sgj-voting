@@ -1,0 +1,13 @@
+# Cabal trash
+dist/
+.cabal-sandbox/
+cabal.sandbox.config
+
+# vim bullshit
+*.swp
+
+# yesod bullshit
+client_session_key.aes
+
+# ctags
+tags
