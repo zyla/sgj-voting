@@ -8,5 +8,4 @@ spec = withApp $ describe "root handler" $ do
     it "works" $ do
         get RootR
         statusIs 200
-        htmlAllContain "title" "My title"
-        htmlAllContain "p" "Hello world"
+        htmlAllContain "title" "Slavic Game Jam"
