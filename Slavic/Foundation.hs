@@ -10,6 +10,7 @@ data App = App
 
 mkYesodData "App" [parseRoutes|
     / RootR GET
+    /register RegisterR GET POST
 |]
 
 instance Yesod App where
@@ -31,3 +32,6 @@ instance YesodPersist App where
     runDB action = do
         app <- getYesod
         runSqlPool action $ appConnectionPool app
+
+instance RenderMessage App FormMessage where
+    renderMessage _ _ = defaultFormMessage
