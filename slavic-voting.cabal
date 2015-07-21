@@ -13,6 +13,7 @@ library
   exposed-modules:     Slavic
                      , Slavic.Foundation
                      , Slavic.Handler.Root
+                     , Slavic.Handler.Registration
                      , Slavic.Model
 
   default-extensions:  QuasiQuotes
@@ -77,6 +78,7 @@ test-suite test
                      , TemplateHaskell
                      , NoImplicitPrelude
                      , OverloadedStrings
+                     , RecordWildCards
 
   build-depends:     base
                    , slavic-voting
@@ -94,5 +96,6 @@ test-suite test
                    , QuickCheck
                    , HUnit
                    , raw-strings-qq
+                   , monad-logger
 
   default-language:  Haskell2010

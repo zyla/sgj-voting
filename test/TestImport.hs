@@ -49,3 +49,9 @@ getTables = do
     |] []
 
     return $ map unSingle tables
+
+-- Utilities
+
+-- Alias, not to confuse CSRF tokens with our tokens
+addCSRFToken :: RequestBuilder site ()
+addCSRFToken = addToken
