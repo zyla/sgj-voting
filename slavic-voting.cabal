@@ -13,6 +13,7 @@ library
   exposed-modules:     Slavic
                      , Slavic.Foundation
                      , Slavic.Handler.Root
+                     , Slavic.Model
 
   default-extensions:  QuasiQuotes
                      , TypeFamilies
@@ -20,6 +21,8 @@ library
                      , OverloadedStrings
                      , MultiParamTypeClasses
                      , NoImplicitPrelude
+                     , GADTs
+                     , GeneralizedNewtypeDeriving
 
   build-depends:       base >=4.7 && <4.8
                      , yesod
@@ -49,13 +52,7 @@ library
 
 executable slavic
   main-is:             Main.hs
-
-  default-extensions:  QuasiQuotes
-                     , TypeFamilies
-                     , TemplateHaskell
-                     , OverloadedStrings
-                     , MultiParamTypeClasses
-                     , NoImplicitPrelude
+  hs-source-dirs:      main
 
   build-depends:       base
                      , slavic-voting
@@ -65,6 +62,7 @@ executable slavic
                      , monad-logger
                      , persistent
                      , persistent-postgresql
+                     , persistent-template
 
   default-language:    Haskell2010
 
@@ -85,6 +83,7 @@ test-suite test
                    , yesod
                    , persistent
                    , persistent-postgresql
+                   , persistent-template
                    , transformers
                    , hspec >= 2.0.0
                    , hspec-discover

@@ -4,3 +4,5 @@
 :set -XOverloadedStrings
 :set -XMultiParamTypeClasses
 :set -XNoImplicitPrelude
+:set -XGADTs
+:set -XGeneralizedNewtypeDeriving
