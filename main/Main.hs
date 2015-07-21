@@ -4,6 +4,7 @@ import ClassyPrelude
 import Slavic
 import Yesod (toWaiApp)
 import qualified Network.Wai.Handler.Warp as Warp
+import Control.Monad.Logger (runStdoutLoggingT)
 
 main :: IO ()
-main = makeApp >>= toWaiApp >>= Warp.run 3000
+main = runStdoutLoggingT makeApp >>= toWaiApp >>= Warp.run 3000

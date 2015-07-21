@@ -6,3 +6,5 @@
 :set -XNoImplicitPrelude
 :set -XGADTs
 :set -XGeneralizedNewtypeDeriving
+:set -XFlexibleContexts
+:set -imain

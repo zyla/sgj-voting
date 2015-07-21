@@ -13,11 +13,12 @@ import Slavic.Model
 import Slavic.Foundation
 
 import Slavic.Handler.Root
+import Slavic.Handler.Registration
 
 mkYesodDispatch "App" resourcesApp
 
-makeApp :: IO App
-makeApp = runStderrLoggingT $ do
+makeApp :: (MonadLogger m, MonadIO m, MonadBaseControl IO m) => m App
+makeApp = do
     pool <- openConnectionPool
     runSqlPool (runMigration migrateAll) pool
     return $ App pool

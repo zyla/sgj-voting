@@ -11,6 +11,7 @@ import Slavic (makeApp)
 import Text.RawString.QQ (r)
 
 import Database.Persist.Sql
+import Control.Monad.Logger
 
 runDB :: SqlPersistM a -> YesodExample App a
 runDB query = do
@@ -22,7 +23,7 @@ runDBWithApp app query = runSqlPersistMPool query (appConnectionPool app)
 
 withApp :: SpecWith App -> Spec
 withApp = before $ do
-    app <- makeApp
+    app <- runNoLoggingT makeApp
     wipeDB app
     return app
 
