@@ -8,7 +8,7 @@ import Slavic.Model
 
 registrationForm :: Html -> MForm Handler (FormResult User, Widget)
 registrationForm = renderDivs $ User
-    <$> areq textField (fs "Token" "token") Nothing
+    <$> (entityKey <$> areq tokenField (fs "Token" "token") Nothing)
     <*> areq textField (fs "Nick" "nick") Nothing
     <*> areq passwordField (fs "Password" "password") Nothing
     <*> areq textField (fs "First name" "first_name") Nothing
@@ -17,6 +17,11 @@ registrationForm = renderDivs $ User
   where
     fs label name = (fieldSettingsFromLabel label) { fsName = Just name, fsId = Just name }
     fieldSettingsFromLabel = fromString
+
+    tokenField = checkMMap fetchToken (tokenToken . entityVal) textField
+    fetchToken tokenStr = runDB (getBy $ UniqueToken tokenStr) >>= return . \case
+        Nothing -> Left ("Invalid token" :: Text)
+        Just token -> Right token
 
 getRegisterR :: Handler Html
 getRegisterR = do

@@ -7,5 +7,6 @@
 :set -XGADTs
 :set -XGeneralizedNewtypeDeriving
 :set -XFlexibleContexts
+:set -XLambdaCase
 :set -XRecordWildCards
 :set -imain

@@ -10,9 +10,10 @@ import Database.Persist.TH
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     Token
         token Text
+        UniqueToken token
 
     User
-        token     Text
+        token     TokenId
         nick      Text
         password  Text
         firstName Text

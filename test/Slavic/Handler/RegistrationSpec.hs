@@ -18,7 +18,7 @@ spec = withApp $ describe "registration" $ do
 
     context "with correct data" $ it "should register user" $ do
         let dummyToken = "123123"
-        runDB $ insert_ $ Token dummyToken
+        tokenId <- runDB $ insert $ Token dummyToken
 
         get RegisterR
         statusIs 200
@@ -35,7 +35,7 @@ spec = withApp $ describe "registration" $ do
            addPostParam "password" "lambdacard"
         statusIs 303
 
-        Just (Entity _ User{..}) <- runDB $ getBy $ UniqueUserToken dummyToken
+        Just (Entity _ User{..}) <- runDB $ getBy $ UniqueUserToken tokenId
         liftIO $ do
             userNick `shouldBe` "jdoe"
             userFirstName `shouldBe` "John"
@@ -45,4 +45,25 @@ spec = withApp $ describe "registration" $ do
             -- FIXME move to enscripp'd passwords!
             userPassword `shouldBe` "lambdacard"
 
-    -- TODO add tests for incorrect input (bad token, missing fields)
+    context "with nonexistent token" $ it "should return error" $ do
+        let dummyToken = "this token does not exist"
+        runDB $ insert_ $ Token "other token"
+
+        get RegisterR
+        statusIs 200
+
+        request $ do
+           setMethod "POST"
+           setUrl RegisterR
+           addCSRFToken
+           addPostParam "token" dummyToken
+           addPostParam "nick" "jdoe"
+           addPostParam "first_name" "John"
+           addPostParam "last_name" "Doe"
+           addPostParam "city" "Warsaw"
+           addPostParam "password" "lambdacard"
+        statusIs 200 -- FIXME find a way to make Yesod return different code for errors
+
+        htmlAllContain ".errors" "Invalid token"
+
+    -- TODO add tests for missing fields

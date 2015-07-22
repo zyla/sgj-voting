@@ -25,6 +25,7 @@ library
                      , GADTs
                      , GeneralizedNewtypeDeriving
                      , FlexibleContexts
+                     , LambdaCase
 
   build-depends:       base >=4.7 && <4.8
                      , yesod
