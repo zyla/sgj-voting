@@ -34,7 +34,7 @@ registrationForm = renderDivs $ User
     nickField = checkM validateUniqueNick textField
 
     validateUniqueNick :: Text -> Handler (Either Text Text)
-    validateUniqueNick nick = (runDB $ getBy $ UniqueUserNick nick) >>= return . \case
+    validateUniqueNick nick = (runDB $ getBy $ UniqueUserNick nick) <&> \case
         Nothing -> Right nick
         Just _otherUser -> Left "Nick already registered"
 

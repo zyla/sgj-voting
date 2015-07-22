@@ -13,3 +13,9 @@ import Control.Monad.Except (runExceptT, throwError, catchError, MonadError)
 -- Intended to be used infix.
 orThrow :: MonadError e m => m (Maybe a) -> e -> m a
 orThrow val err = val >>= maybe (throwError err) return
+
+
+-- | Flipped version of '<$>'
+infixl 5 <&>
+(<&>) :: Functor f => f a -> (a -> b) -> f b
+(<&>) = flip (<$>)
