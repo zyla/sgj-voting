@@ -89,4 +89,28 @@ spec = withApp $ describe "registration" $ do
 
         htmlAllContain ".errors" "Token already registered"
 
+    context "with already registered nick" $ it "should return error" $ do
+        let dummyToken = "123123"
+        runDB $ do
+            insert_ $ Token dummyToken
+            tokenId <- insert $ Token "other token"
+            insert_ $ User tokenId "jdoe" "lambdacard" "John" "Doe" "Warsaw"
+
+        get RegisterR
+        statusIs 200
+
+        request $ do
+           setMethod "POST"
+           setUrl RegisterR
+           addCSRFToken
+           addPostParam "token" dummyToken
+           addPostParam "nick" "jdoe"
+           addPostParam "first_name" "Test"
+           addPostParam "last_name" "Test"
+           addPostParam "city" "Warsaw"
+           addPostParam "password" "password"
+        statusIs 200 -- FIXME find a way to make Yesod return different code for errors
+
+        htmlAllContain ".errors" "Nick already registered"
+
     -- TODO add tests for missing fields
