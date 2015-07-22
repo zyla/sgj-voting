@@ -39,16 +39,17 @@ postLoginR = do
         FormSuccess loginRequest -> do
             result <- login loginRequest
             case result of
-                Right user -> redirect RootR -- TODO: redirect to success page
+                Right _user -> redirect RootR -- TODO: redirect to success page
                 Left errors -> liftIO (print errors) >> displayLoginForm widget enctype
         FormFailure errors -> liftIO (print errors) >> displayLoginForm widget enctype
+        FormMissing -> displayLoginForm widget enctype
 
 login :: LoginRequest -> Handler (Either Text User)
 login LoginRequest{..} = do
     maybeUser <- runDB $ getBy $ UniqueUserNick lr_login
     case maybeUser of
         Nothing -> return $ Left "Invalid login"
-        Just (Entity userId user) -> return $
+        Just (Entity _ user) -> return $
             if verifyPassword lr_password $ userPassword user
             then Right user
             else Left "xD"

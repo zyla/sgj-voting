@@ -50,7 +50,8 @@ postRegisterR = do
         FormSuccess user -> do
             registerUser user
             redirect RootR -- TODO: redirect to success page
-        FormFailure errors -> displayRegistrationForm widget enctype
+        FormFailure _errors -> displayRegistrationForm widget enctype
+        FormMissing -> displayRegistrationForm widget enctype
 
 displayRegistrationForm :: Widget -> Enctype -> Handler Html
 displayRegistrationForm widget enctype = 
