@@ -30,7 +30,7 @@ postRegisterR = do
         FormSuccess user -> do
             registerUser user
             redirect RootR -- TODO: redirect to success page
-        FormFailure errors -> liftIO (print errors) >> displayRegistrationForm widget enctype
+        FormFailure errors -> displayRegistrationForm widget enctype
 
 displayRegistrationForm :: Widget -> Enctype -> Handler Html
 displayRegistrationForm widget enctype = 
