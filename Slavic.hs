@@ -14,6 +14,7 @@ import Slavic.Foundation
 
 import Slavic.Handler.Root
 import Slavic.Handler.Registration
+import Slavic.Handler.Login
 
 mkYesodDispatch "App" resourcesApp
 

@@ -11,6 +11,7 @@ data App = App
 mkYesodData "App" [parseRoutes|
     / RootR GET
     /register RegisterR GET POST
+    /login LoginR GET POST
 |]
 
 instance Yesod App where
