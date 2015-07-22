@@ -4,6 +4,11 @@ import ClassyPrelude
 import Yesod
 import Slavic.Foundation
 import Slavic.Model
+import Control.Monad.Except (runExceptT, throwError)
+
+-- Using 'lift' exported from ClassyPrelude in fetchToken gets me a weird
+-- error, need to investigate this further
+import Control.Monad.Trans.Class as T (lift)
 
 
 registrationForm :: Html -> MForm Handler (FormResult User, Widget)
@@ -19,9 +24,16 @@ registrationForm = renderDivs $ User
     fieldSettingsFromLabel = fromString
 
     tokenField = checkMMap fetchToken (tokenToken . entityVal) textField
-    fetchToken tokenStr = runDB (getBy $ UniqueToken tokenStr) >>= return . \case
-        Nothing -> Left ("Invalid token" :: Text)
-        Just token -> Right token
+    fetchToken tokenStr = runDB $ runExceptT $ do
+        token <- (T.lift $ getBy $ UniqueToken tokenStr) >>=
+            maybe (throwError ("Invalid token" :: Text)) return
+
+        -- Check if token is already registered
+        alreadyRegisteredUser <- T.lift $ getBy $ UniqueUserToken $ entityKey token
+        when (isJust alreadyRegisteredUser) $
+            throwError ("Token already registered" :: Text)
+
+        return token
 
 getRegisterR :: Handler Html
 getRegisterR = do
