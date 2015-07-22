@@ -33,7 +33,6 @@ spec = withApp $ describe "registration" $ do
            addPostParam "last_name" "Doe"
            addPostParam "city" "Warsaw"
            addPostParam "password" "lambdacard"
-        printBody
         statusIs 303
 
         Just (Entity _ User{..}) <- runDB $ getBy $ UniqueUserToken dummyToken
