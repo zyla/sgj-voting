@@ -23,7 +23,7 @@ runDBWithApp app query = runSqlPersistMPool query (appConnectionPool app)
 
 withApp :: SpecWith App -> Spec
 withApp = before $ do
-    app <- runNoLoggingT makeApp
+    app <- runNoLoggingT $ makeApp "dbname=slavic_test"
     wipeDB app
     return app
 

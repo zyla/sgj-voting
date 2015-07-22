@@ -17,12 +17,11 @@ import Slavic.Handler.Registration
 
 mkYesodDispatch "App" resourcesApp
 
-makeApp :: (MonadLogger m, MonadIO m, MonadBaseControl IO m) => m App
-makeApp = do
+makeApp :: (MonadLogger m, MonadIO m, MonadBaseControl IO m) => ByteString -> m App
+makeApp connString = do
     pool <- openConnectionPool
     runSqlPool (runMigration migrateAll) pool
     return $ App pool
   where
     openConnectionPool = createPostgresqlPool connString poolSize
-    connString = "dbname=slavic"
     poolSize = 10
