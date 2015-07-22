@@ -18,6 +18,8 @@ library
                      , Slavic.Model
                      , Slavic.Model.Category
 
+  other-modules:       ClassyPrelude.Slavic
+
   default-extensions:  QuasiQuotes
                      , TypeFamilies
                      , TemplateHaskell

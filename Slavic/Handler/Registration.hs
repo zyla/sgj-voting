@@ -1,10 +1,9 @@
 module Slavic.Handler.Registration where
 
-import ClassyPrelude
+import ClassyPrelude.Slavic
 import Yesod
 import Slavic.Foundation
 import Slavic.Model
-import Control.Monad.Except (runExceptT, throwError)
 
 
 registrationForm :: Html -> MForm Handler (FormResult User, Widget)
@@ -23,8 +22,7 @@ registrationForm = renderDivs $ User
 
     fetchToken :: Text -> Handler (Either Text (Entity Token))
     fetchToken tokenStr = runDB $ runExceptT $ do
-        token <- (lift $ getBy $ UniqueToken tokenStr) >>=
-            maybe (throwError "Invalid token") return
+        token <- (lift $ getBy $ UniqueToken tokenStr) `orThrow` "Invalid token"
 
         -- Check if token is already registered
         alreadyRegisteredUser <- lift $ getBy $ UniqueUserToken $ entityKey token
