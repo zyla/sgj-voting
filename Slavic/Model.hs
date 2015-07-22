@@ -21,5 +21,6 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         city      Text
 
         UniqueUserToken token
+        UniqueUserNick nick
         deriving Show
 |]
