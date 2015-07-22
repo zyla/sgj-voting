@@ -6,6 +6,7 @@ module Slavic.Model (
 import ClassyPrelude
 import Database.Persist.Sql
 import Database.Persist.TH
+import Slavic.Model.Category
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     Token
@@ -23,4 +24,29 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         UniqueUserToken token
         UniqueUserNick nick
         deriving Show
+
+    Team
+        name       Text
+        gameTitle  Text
+--        screenshot Text
+        UniqueTeamName name
+        UniqueTeamGameTitle gameTitle
+
+    TeamMember
+        team Team
+        user User
+
+    VotingBucket
+        round Int
+
+    VotingBucketTeam
+        team   Team
+        bucket VotingBucket
+
+    Vote
+        owner    User
+        value    Int
+        game     Team
+        bucket   VotingBucket
+        category Category
 |]
