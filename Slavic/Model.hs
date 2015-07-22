@@ -15,7 +15,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     User
         token     TokenId
         nick      Text
-        password  Text
+        password  ByteString
         firstName Text
         lastName  Text
         city      Text

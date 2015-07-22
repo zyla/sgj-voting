@@ -51,6 +51,8 @@ library
                      , wai-logger
                      , transformers
                      , transformers-compat
+                     , cryptohash
+                     , pwstore-fast
 
   default-language:    Haskell2010
 
