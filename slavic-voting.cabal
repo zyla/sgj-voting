@@ -14,7 +14,9 @@ library
                      , Slavic.Foundation
                      , Slavic.Handler.Root
                      , Slavic.Handler.Registration
+                     , Slavic.Handler.Login
                      , Slavic.Model
+                     , Slavic.Model.Category
 
   default-extensions:  QuasiQuotes
                      , TypeFamilies
@@ -26,6 +28,7 @@ library
                      , GeneralizedNewtypeDeriving
                      , FlexibleContexts
                      , LambdaCase
+                     , RecordWildCards
 
   build-depends:       base >=4.7 && <4.8
                      , yesod
