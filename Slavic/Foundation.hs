@@ -2,6 +2,7 @@ module Slavic.Foundation where
 
 import ClassyPrelude
 import Yesod
+import Yesod.Auth hiding (LoginR)
 import Database.Persist.Sql
 
 data App = App
@@ -36,3 +37,18 @@ instance YesodPersist App where
 
 instance RenderMessage App FormMessage where
     renderMessage _ _ = defaultFormMessage
+
+
+instance YesodAuth App where
+    type AuthId App = Text
+
+    loginDest _ = RootR
+    logoutDest _ = RootR
+
+    maybeAuthId = lookupSession credsKey 
+
+    authPlugins _ = []
+
+    authHttpManager _ = error "This app doesn't neet HTTP manager"
+
+    getAuthId = return . Just . credsIdent

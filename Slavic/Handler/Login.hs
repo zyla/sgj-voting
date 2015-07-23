@@ -1,23 +1,22 @@
 module Slavic.Handler.Login where
 
-import ClassyPrelude
+import ClassyPrelude.Slavic
 import Yesod
+import Yesod.Auth hiding (LoginR)
 import Slavic.Foundation
 import Slavic.Model
-import Slavic.Model.Password
+import Slavic.Model.User
+import Slavic.Forms
 
 data LoginRequest = LoginRequest
-    { lr_login :: Text
+    { lr_nick :: Text
     , lr_password :: Text
     }
 
 loginForm :: Html -> MForm Handler (FormResult LoginRequest, Widget)
 loginForm = renderDivs $ LoginRequest
-    <$> areq textField (fs "Login" "login") Nothing
-    <*> areq passwordField (fs "Password" "password") Nothing
-  where
-    fs label name = (fieldSettingsFromLabel label) { fsName = Just name, fsId = Just name }
-    fieldSettingsFromLabel = fromString
+    <$> areq textField (mkFieldSettings "Nick" "nick") Nothing
+    <*> areq passwordField (mkFieldSettings "Password" "password") Nothing
 
 displayLoginForm :: Widget -> Enctype -> Handler Html
 displayLoginForm widget enctype =
@@ -36,21 +35,10 @@ postLoginR :: Handler Html
 postLoginR = do
     ((result,widget), enctype) <- runFormPost loginForm
     case result of
-        FormSuccess loginRequest -> do
-            result <- login loginRequest
+        FormSuccess LoginRequest{..} -> do
+            result <- runDB $ login lr_nick lr_password
             case result of
                 Right _user -> redirect RootR -- TODO: redirect to success page
                 Left errors -> liftIO (print errors) >> displayLoginForm widget enctype
         FormFailure errors -> liftIO (print errors) >> displayLoginForm widget enctype
         FormMissing -> displayLoginForm widget enctype
-
-login :: LoginRequest -> Handler (Either Text User)
-login LoginRequest{..} = do
-    maybeUser <- runDB $ getBy $ UniqueUserNick lr_login
-    case maybeUser of
-        Nothing -> return $ Left "Invalid login"
-        Just (Entity _ user) -> return $
-            if verifyPassword lr_password $ userPassword user
-            then Right user
-            else Left "xD"
-

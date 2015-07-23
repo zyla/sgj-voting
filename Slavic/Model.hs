@@ -24,6 +24,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         UniqueUserToken token
         UniqueUserNick nick
         deriving Show
+        deriving Eq
 
     Team
         name       Text

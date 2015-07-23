@@ -17,6 +17,8 @@ library
                      , Slavic.Handler.Login
                      , Slavic.Model
                      , Slavic.Model.Category
+                     , Slavic.Model.User
+                     , Slavic.Forms
 
   other-modules:       ClassyPrelude.Slavic
 
@@ -36,6 +38,7 @@ library
                      , yesod
                      , yesod-core
                      , yesod-form
+                     , yesod-auth
                      , classy-prelude
                      , classy-prelude-conduit
                      , classy-prelude-yesod
