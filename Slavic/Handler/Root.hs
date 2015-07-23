@@ -8,4 +8,4 @@ import Slavic.Model
 getRootR :: Handler Html
 getRootR = defaultLayout $ do
     setTitle "Slavic Game Jam"
-    [whamlet|<p>Hello world|]
+    $(whamletFile "templates/root.hamlet")
