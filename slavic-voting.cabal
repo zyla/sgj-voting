@@ -39,6 +39,7 @@ library
                      , yesod-core
                      , yesod-form
                      , yesod-auth
+                     , yesod-static
                      , classy-prelude
                      , classy-prelude-conduit
                      , classy-prelude-yesod
