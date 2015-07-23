@@ -6,4 +6,6 @@
         <title>#{pageTitle pc}
         ^{pageHead pc}
     <body>
-        ^{pageBody pc}
+        <div #wrapper>
+            <h1 #title>#{pageTitle pc}
+            ^{pageBody pc}

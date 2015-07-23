@@ -1,0 +1,8 @@
+*, html {
+    font-family: 'Cambria Regular', Cambria, "Times New Roman", serif;
+    line-height: 24px
+}
+#wrapper { width: 800px; margin: 50px auto; }
+h1 { font-size: 60px; text-align: center; margin-top: 96px }
+ul, form { margin-top: 96px; margin-left: 96px }
+ul { font-size: 36px; list-style-type: none; }
