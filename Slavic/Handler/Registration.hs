@@ -7,7 +7,7 @@ import Slavic.Model
 
 
 registrationForm :: Html -> MForm Handler (FormResult User, Widget)
-registrationForm = renderDivs $ User
+registrationForm = renderTable $ User
     <$> (entityKey <$> areq tokenField (fs "Token" "token") Nothing)
     <*> areq nickField (fs "Nick" "nick") Nothing
     <*> (encodeUtf8 <$> areq passwordField (fs "Password" "password") Nothing)
@@ -54,11 +54,13 @@ postRegisterR = do
         FormMissing -> displayRegistrationForm widget enctype
 
 displayRegistrationForm :: Widget -> Enctype -> Handler Html
-displayRegistrationForm widget enctype = 
-    defaultLayout [whamlet|
+displayRegistrationForm widget enctype =
+    defaultLayout $ do
+    setTitle "Register - SGJ"
+    [whamlet|
         <form method=post action=@{RegisterR} enctype=#{enctype}>
-            ^{widget}
-            <input type=submit>
+            <table>^{widget}
+            <input type=submit value="Submit">
         |]
 
 registerUser :: User -> Handler ()
