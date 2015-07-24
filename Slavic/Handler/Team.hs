@@ -6,16 +6,14 @@ import Slavic.Foundation
 import Slavic.Model
 import Slavic.Model.User
 import Slavic.Model.Team (addUserToTeam, removeUserFromTeam, getTeams)
+import Slavic.Forms
 import Slavic.Handler.Util
 import Text.Blaze (text)
 
 makeTeamForm :: Html -> MForm Handler (FormResult Team, Widget)
 makeTeamForm = renderTable $ Team
-    <$> areq textField (fs "Team name" "name") Nothing
+    <$> areq textField (mkFieldSettings "Team name" "name") Nothing
     <*> pure Nothing
-  where
-    fs label name = (fieldSettingsFromLabel label) { fsName = Just name, fsId = Just name }
-    fieldSettingsFromLabel = fromString
 
 
 getAddTeamR :: Handler Html

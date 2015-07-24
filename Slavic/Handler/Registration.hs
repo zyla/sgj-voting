@@ -5,6 +5,7 @@ import Yesod
 import Slavic.Foundation
 import Slavic.Model
 import Slavic.Model.User
+import Slavic.Forms
 
 data UserRegistration = UserRegistration
     { urd_token :: TokenId
@@ -17,16 +18,13 @@ data UserRegistration = UserRegistration
 
 registrationForm :: Html -> MForm Handler (FormResult UserRegistration, Widget)
 registrationForm = renderTable $ UserRegistration
-    <$> (entityKey <$> areq tokenField (fs "Token" "token") Nothing)
-    <*> areq nickField (fs "Nick" "nick") Nothing
-    <*> areq passwordField (fs "Password" "password") Nothing
-    <*> areq textField (fs "First name" "first_name") Nothing
-    <*> areq textField (fs "Last name" "last_name") Nothing
-    <*> areq textField (fs "City" "city") Nothing
+    <$> (entityKey <$> areq tokenField (mkFieldSettings "Token" "token") Nothing)
+    <*> areq nickField (mkFieldSettings "Nick" "nick") Nothing
+    <*> areq passwordField (mkFieldSettings "Password" "password") Nothing
+    <*> areq textField (mkFieldSettings "First name" "first_name") Nothing
+    <*> areq textField (mkFieldSettings "Last name" "last_name") Nothing
+    <*> areq textField (mkFieldSettings "City" "city") Nothing
   where
-    fs label name = (fieldSettingsFromLabel label) { fsName = Just name, fsId = Just name }
-    fieldSettingsFromLabel = fromString
-
     tokenField = checkMMap fetchToken (tokenToken . entityVal) textField
 
     fetchToken :: Text -> Handler (Either Text (Entity Token))
