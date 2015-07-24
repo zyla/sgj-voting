@@ -70,7 +70,7 @@ spec = withApp $ describe "registration" $ do
         let dummyToken = "123123"
         runDB $ do
             tokenId <- insert $ Token dummyToken
-            insert_ $ User tokenId "jdoe" "lambdacard" "John" "Doe" "Warsaw"
+            insert_ $ User tokenId "jdoe" "lambdacard" "John" "Doe" "Warsaw" Nothing
 
         get RegisterR
         statusIs 200
@@ -94,7 +94,7 @@ spec = withApp $ describe "registration" $ do
         runDB $ do
             insert_ $ Token dummyToken
             tokenId <- insert $ Token "other token"
-            insert_ $ User tokenId "jdoe" "lambdacard" "John" "Doe" "Warsaw"
+            insert_ $ User tokenId "jdoe" "lambdacard" "John" "Doe" "Warsaw" Nothing
 
         get RegisterR
         statusIs 200

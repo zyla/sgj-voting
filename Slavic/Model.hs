@@ -20,6 +20,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         firstName Text
         lastName  Text
         city      Text
+        team      Team Maybe
 
         UniqueUserToken token
         UniqueUserNick nick
@@ -27,27 +28,35 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         deriving Eq
 
     Team
-        name       Text
-        gameTitle  Text
---        screenshot Text
+        name Text
+        game Game Maybe
         UniqueTeamName name
-        UniqueTeamGameTitle gameTitle
+        deriving Show
+        deriving Eq
 
-    TeamMember
-        team Team
-        user User
+    Game
+        title  Text
+--        screenshot Text
+        UniqueGameTitle title
+        deriving Show
+        deriving Eq
 
     VotingBucket
+        name  Text
         round Int
 
     VotingBucketTeam
         team   Team
         bucket VotingBucket
 
+    VotingBucketGame
+        game   Game
+        bucket VotingBucket
+
     Vote
         owner    User
         value    Int
-        game     Team
+        game     Game
         bucket   VotingBucket
         category Category
 |]

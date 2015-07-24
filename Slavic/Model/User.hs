@@ -27,7 +27,7 @@ makeUser
     -> IO User
 makeUser token nick password firstName lastName city = do
     hashedPassword <- makePassword password
-    pure $ User token nick hashedPassword firstName lastName city
+    pure $ User token nick hashedPassword firstName lastName city Nothing
 
 login :: MonadIO m
       => Text -- ^ nick
@@ -41,3 +41,4 @@ login nick password = runExceptT $ do
 
   where
     errorMsg = "Invalid nick/password"
+
