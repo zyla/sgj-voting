@@ -10,8 +10,8 @@
             $maybe authUser <- maybeAuthUser
                 <p>Welcome, #{userNick $ entityVal authUser}
                 <a href="@{LogoutR}">Logout
+        <h1 #title>#{pageTitle pc}
         <div #wrapper>
-            <h1 #title>#{pageTitle pc}
             ^{pageBody pc}
         <footer>
             <p>

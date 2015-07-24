@@ -1,6 +1,6 @@
 <h2>Teams
 
-<table>
+<table .teams>
     <thead><tr>
         <td>Name
         <td>Members
