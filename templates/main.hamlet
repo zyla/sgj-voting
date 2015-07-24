@@ -8,8 +8,8 @@
     <body>
         <header>
             $maybe authUser <- maybeAuthUser
+                <a href="@{LogoutR}" #logout>Logout
                 <p>Welcome, #{userNick $ entityVal authUser}
-                <a href="@{LogoutR}">Logout
         <h1 #title>#{pageTitle pc}
         <div #wrapper>
             ^{pageBody pc}
