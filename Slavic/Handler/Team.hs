@@ -5,7 +5,7 @@ import Yesod
 import Slavic.Foundation
 import Slavic.Model
 import Slavic.Model.User
-import Slavic.Model.Team (addUserToTeam, removeUserFromTeam)
+import Slavic.Model.Team (addUserToTeam, removeUserFromTeam, getTeams)
 import Slavic.Handler.Util
 import Text.Blaze (text)
 
@@ -60,7 +60,6 @@ getAddTeamSuccessfulR = withAuthUser $ \(Entity _ user) ->
         setTitle "Team created"
         $(whamletFile "templates/changeteam_successful.hamlet")
 
-
 getLeaveTeamR :: Handler Html
 getLeaveTeamR = withAuthUser $ \(Entity _userId user) -> do
     case userTeam user of
@@ -90,3 +89,10 @@ getLeaveTeamSuccessfulR = withAuthUser $ \(Entity _ user) ->
         setTitle "Left the team"
         $(whamletFile "templates/changeteam_successful.hamlet")
 
+-- | Used in root handler to display team list page when user is logged in.
+displayTeams :: Handler Html
+displayTeams = do
+    teams <- runDB getTeams
+    defaultLayout $ do
+        setTitle "Teams - Slavic Game Jam"
+        $(whamletFile "templates/teams.hamlet")

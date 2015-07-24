@@ -1,0 +1,11 @@
+<a href=@{AddTeamR}>Create new team
+
+<h2>Teams
+
+<table>
+    <thead><tr>
+        <td>Name
+    <tbody>
+        $forall (Entity _ team) <- teams
+            <tr>
+                <td>#{teamName team}

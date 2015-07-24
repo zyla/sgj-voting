@@ -9,4 +9,5 @@
 :set -XFlexibleContexts
 :set -XLambdaCase
 :set -XRecordWildCards
+:set -XRankNTypes
 :set -imain

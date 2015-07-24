@@ -5,12 +5,12 @@ import Yesod
 import Slavic.Foundation
 import Slavic.Model
 
+import Slavic.Handler.Team (displayTeams)
+
 getRootR :: Handler Html
 getRootR = 
     getAuthUser >>= \case
         Nothing -> defaultLayout $ do
             setTitle "Slavic Game Jam"
             $(whamletFile "templates/root_anonymous.hamlet")
-        Just _authUser -> defaultLayout $ do
-            setTitle "Slavic Game Jam"
-            $(whamletFile "templates/root.hamlet")
+        Just _authUser -> displayTeams

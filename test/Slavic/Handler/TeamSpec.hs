@@ -9,6 +9,16 @@ createUserWithCreds login password = do
     tokenId <- insert $ Token "123123"
     insertEntity =<< liftIO (makeUser tokenId login password "John" "Doe" "Warsaw")
 
+createUserAndLogin login password = do
+    user <- runDB $ createUserWithCreds login password
+    loginWith login password
+    statusIs 303
+    return user
+
+makeTeam :: Int64 -> Text -> SqlPersistM (Entity Team)
+makeTeam id name =
+    let entity = Entity (toSqlKey id) $ Team name Nothing
+    in insertKey (entityKey entity) (entityVal entity) >> return entity
 
 spec :: Spec
 spec = withApp $ do
@@ -32,8 +42,7 @@ spec = withApp $ do
 
         context "when user has no team" $ do
             it "should display form" $ do
-                Entity userId user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
-                loginWith "jdoe" "lambdacard"
+                createUserAndLogin "jdoe" "lambdacard"
 
                 get AddTeamR
                 statusIs 200
@@ -41,8 +50,7 @@ spec = withApp $ do
 
             context "when user creates new team" $ do
                 it "should create team and add creator to the team" $ do
-                    Entity userId user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
-                    loginWith "jdoe" "lambdacard"
+                    Entity userId user <- createUserAndLogin "jdoe" "lambdacard"
 
                     get AddTeamR
                     statusIs 200
@@ -92,3 +100,22 @@ spec = withApp $ do
 
                 Just (Entity _ user) <- runDB $ selectFirst [UserId ==. userId] []
                 liftIO $ userTeam user `shouldBe` Nothing
+
+    describe "root handler" $ context "when user is logged in" $
+        it "should display teams and link to 'Add team'" $ do
+            createUserAndLogin "jdoe" "lambdacard"
+
+            teams <- runDB $ sequence
+                [ makeTeam 1 "Monadic Warriors"
+                , makeTeam 2 "Haskell Bank"
+                , makeTeam 3 "Zygohistoprepromorphisms"
+                ]
+
+            get RootR
+            statusIs 200
+
+            htmlAnyContain "a" "Create new team"
+
+            htmlAnyContain "td" "Haskell Bank"
+            htmlAnyContain "td" "Monadic Warriors"
+            htmlAnyContain "td" "Zygohistoprepromorphisms"
