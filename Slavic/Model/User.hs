@@ -40,4 +40,4 @@ login nick password = runExceptT $ do
     return user
 
   where
-    errorMsg = "Invalid credentials"
+    errorMsg = "Invalid nick/password"

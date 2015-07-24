@@ -35,7 +35,7 @@ spec = withApp $ do
 
             loginWith "bad_nick" "lambdacard"
             statusIs 200
-            htmlAllContain ".errors" "Invalid credentials"
+            htmlAllContain ".errors" "Invalid nick/password"
             
             get RootR
             statusIs 200
@@ -46,7 +46,7 @@ spec = withApp $ do
 
             loginWith "jdoe" "bad_password"
             statusIs 200
-            htmlAllContain ".errors" "Invalid credentials"
+            htmlAllContain ".errors" "Invalid nick/password"
             
             get RootR
             statusIs 200

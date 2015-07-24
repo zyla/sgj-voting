@@ -17,13 +17,13 @@ spec = withApp $ do
             user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
 
             result <- runDB $ login "GUWNO" "lambdacard"
-            liftIO $ result `shouldBe` Left "Invalid credentials"
+            liftIO $ result `shouldBe` Left "Invalid nick/password"
 
         context "with bad password" $ it "should return error" $ do
             user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
 
             result <- runDB $ login "jdoe" "badpassword"
-            liftIO $ result `shouldBe` Left "Invalid credentials"
+            liftIO $ result `shouldBe` Left "Invalid nick/password"
 
 createUserWithCreds login password = do
     tokenId <- insert $ Token "123123"
