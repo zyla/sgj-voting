@@ -31,6 +31,9 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         name Text
         game Game Maybe
         UniqueTeamName name
+
+        gameTitle Text Maybe MigrationOnly
+
         deriving Show
         deriving Eq
 
