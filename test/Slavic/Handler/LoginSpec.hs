@@ -17,20 +17,11 @@ spec = withApp $ do
         let createUserWithCreds login password = do
                 tokenId <- insert $ Token "123123"
                 insertEntity =<< liftIO (makeUser tokenId login password "John" "Doe" "Warsaw")
-            
 
         context "with correct data" $ it "should log in" $ do
             user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
 
-            get LoginR
-            statusIs 200
-
-            request $ do
-               setMethod "POST"
-               setUrl LoginR
-               addCSRFToken
-               addPostParam "nick" "jdoe"
-               addPostParam "password" "lambdacard"
+            loginWith "jdoe" "lambdacard"
             statusIs 303
             
             get RootR
@@ -38,3 +29,25 @@ spec = withApp $ do
             -- This tests also the root handler, but it's the easiest way to
             -- check if we're logged in.
             bodyContains "jdoe"
+
+        context "with invalid nick" $ it "should display error" $ do
+            user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
+
+            loginWith "bad_nick" "lambdacard"
+            statusIs 200
+            htmlAllContain ".errors" "Invalid credentials"
+            
+            get RootR
+            statusIs 200
+            assertBodyDoesntContain "jdoe"
+
+        context "with invalid password" $ it "should display error" $ do
+            user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
+
+            loginWith "jdoe" "bad_password"
+            statusIs 200
+            htmlAllContain ".errors" "Invalid credentials"
+            
+            get RootR
+            statusIs 200
+            assertBodyDoesntContain "jdoe"

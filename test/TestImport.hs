@@ -3,14 +3,17 @@ module TestImport
     , module X
     ) where
 
-import ClassyPrelude         as X
-import Slavic.Foundation     as X
-import Yesod.Test            as X
-import Test.Hspec            as X
+import ClassyPrelude as X
+import Slavic.Foundation as X
+import Yesod.Test as X
+import Test.Hspec as X
+import Test.HUnit as X (assertBool)
+import Network.Wai.Test as X (SResponse(..))
+import Slavic.Model as X hiding (get)
 import Slavic (makeApp)
 import Text.RawString.QQ (r)
 
-import Database.Persist.Sql
+import Database.Persist.Sql as X hiding (get)
 import Control.Monad.Logger
 
 runDB :: SqlPersistM a -> YesodExample App a
@@ -55,3 +58,19 @@ getTables = do
 -- Alias, not to confuse CSRF tokens with our tokens
 addCSRFToken :: RequestBuilder site ()
 addCSRFToken = addToken
+
+assertBodyDoesntContain text = 
+    withResponse $ \res ->
+      liftIO $ assertBool ("Expected body not to contain " ++ text) $
+        not $ encodeUtf8 (pack text) `isInfixOf` simpleBody res
+            
+loginWith nick password = do
+    get LoginR
+    statusIs 200
+
+    request $ do
+       setMethod "POST"
+       setUrl LoginR
+       addCSRFToken
+       addPostParam "nick" nick
+       addPostParam "password" password

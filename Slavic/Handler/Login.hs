@@ -36,6 +36,16 @@ getLoginR = do
 postLoginR :: Handler Html
 postLoginR = do
     ((result,widget), enctype) <- runFormPost loginForm
+
+    let displayErrors errors = displayLoginForm widget' enctype
+          where
+            widget' = widget >> errorsWidget
+            errorsWidget = [whamlet|
+                <div .errors>
+                    $forall err <- errors
+                        <p>#{err}
+                |]
+
     case result of
         FormSuccess LoginRequest{..} -> do
             result <- runDB $ login lr_nick lr_password
@@ -43,6 +53,7 @@ postLoginR = do
                 Right (Entity _ User{userNick=nick}) -> do
                     setAuthUserNick nick
                     redirect RootR
-                Left errors -> liftIO (print errors) >> displayLoginForm widget enctype
-        FormFailure errors -> liftIO (print errors) >> displayLoginForm widget enctype
+                Left error -> displayErrors [error]
+        FormFailure errors -> displayErrors errors
         FormMissing -> displayLoginForm widget enctype
+
