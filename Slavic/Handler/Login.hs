@@ -14,16 +14,18 @@ data LoginRequest = LoginRequest
     }
 
 loginForm :: Html -> MForm Handler (FormResult LoginRequest, Widget)
-loginForm = renderDivs $ LoginRequest
+loginForm = renderTable $ LoginRequest
     <$> areq textField (mkFieldSettings "Nick" "nick") Nothing
     <*> areq passwordField (mkFieldSettings "Password" "password") Nothing
 
 displayLoginForm :: Widget -> Enctype -> Handler Html
 displayLoginForm widget enctype =
-    defaultLayout [whamlet|
-        <form method=post action=@{LoginR} enctype=#{enctype}>
-            ^{widget}
-            <input type=submit>
+    defaultLayout $ do
+        setTitle "Login - SGJ"
+        [whamlet|
+            <form method=post action=@{LoginR} enctype=#{enctype}>
+                <table>^{widget}
+                <input type=submit>
         |]
 
 getLoginR :: Handler Html
