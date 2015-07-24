@@ -4,6 +4,13 @@
     <thead><tr>
         <td>Name
     <tbody>
-        $forall (Entity _ team) <- teams
+        $forall (Entity teamId team) <- teams
             <tr>
                 <td>#{teamName team}
+                <td>
+                    $maybe currentTeamId <- entityKey <$> currentTeam
+                        $if currentTeamId == teamId
+                            This is your team.
+                    $nothing
+                        <form action=@{JoinTeamR teamId} method="POST">
+                            <input type="submit" value="Join team">

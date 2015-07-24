@@ -87,3 +87,11 @@ displayTeams = withAuthUser $ \(Entity _ authUser) -> do
         setTitle "Teams - Slavic Game Jam"
         $(whamletFile "templates/current_team.hamlet")
         $(whamletFile "templates/teams.hamlet")
+
+postJoinTeamR :: TeamId -> Handler Html
+postJoinTeamR teamId = withAuthUser $ \(Entity userId user) -> do
+    case userTeam user of
+        Nothing -> do
+            runDB $ addUserToTeam teamId userId
+            redirect RootR
+        Just _team -> redirect RootR

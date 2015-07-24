@@ -138,3 +138,30 @@ spec = withApp $ do
             statusIs 200
 
             htmlAnyContain "p" "You are now in team Monadic Warriors"
+
+    describe "joinTeam" $ do
+        context "when user is in a team" $
+            it "should redirect to root" $ do
+                Entity userId user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
+                Entity teamId team <- runDB $ insertEntity $ Team "test" Nothing
+                runDB $ update userId [UserTeam =. Just teamId]
+                loginWith "jdoe" "lambdacard"
+
+                Entity newTeamId _ <- runDB $ insertEntity $ Team "new team" Nothing
+
+                post $ JoinTeamR newTeamId
+                statusIs 303
+                assertHeader "Location" "/"
+
+        context "when user is in not in any team" $
+            it "should join the team" $ do
+                Entity userId user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
+                loginWith "jdoe" "lambdacard"
+
+                Entity newTeamId _ <- runDB $ insertEntity $ Team "new team" Nothing
+
+                post $ JoinTeamR newTeamId
+                statusIs 303
+
+                Just (Entity _ user) <- runDB $ selectFirst [UserId ==. userId] []
+                liftIO $ userTeam user `shouldBe` Just newTeamId
