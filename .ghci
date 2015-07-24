@@ -11,3 +11,5 @@
 :set -XRecordWildCards
 :set -XRankNTypes
 :set -imain
+
+:m + ClassyPrelude Yesod Yesod.Test Database.Persist.Sql
