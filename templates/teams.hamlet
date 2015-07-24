@@ -3,11 +3,13 @@
 <table>
     <thead><tr>
         <td>Name
+        <td>Members
         <td>
     <tbody>
-        $forall (Entity teamId team) <- teams
+        $forall (TeamWithMembers teamId teamName members) <- teams
             <tr>
-                <td>#{teamName team}
+                <td>#{teamName}
+                <td>#{intercalate ", " members}
                 <td>
                     $maybe currentTeamId <- entityKey <$> currentTeam
                         $if currentTeamId == teamId

@@ -22,6 +22,18 @@ makeTeam id name =
     let entity = Entity (toSqlKey id) $ Team name Nothing
     in insertKey (entityKey entity) (entityVal entity) >> return entity
 
+makeTeamWithMembers :: Int64 -> Text -> [Text] -> SqlPersistM (Entity Team)
+makeTeamWithMembers id name members = do
+    let teamId = toSqlKey id
+        entity = Entity teamId $ Team name Nothing
+    insertKey teamId (entityVal entity)
+
+    forM_ members $ \nick -> do
+        tokenId <- insert $ Token nick
+        insert_ $ User tokenId nick "" nick nick nick (Just teamId)
+
+    return entity
+
 spec :: Spec
 spec = withApp $ do
     describe "addTeam" $ do
@@ -105,21 +117,21 @@ spec = withApp $ do
                 liftIO $ userTeam user `shouldBe` Nothing
 
     describe "root handler" $ context "when user is logged in" $ do
-        it "should display teams" $ do
+        it "should display teams with members" $ do
             createUserAndLogin "jdoe" "lambdacard"
 
             teams <- runDB $ sequence
-                [ makeTeam 1 "Monadic Warriors"
-                , makeTeam 2 "Haskell Bank"
-                , makeTeam 3 "Zygohistoprepromorphisms"
+                [ makeTeamWithMembers 1 "Monadic Warriors" ["zyla", "buoto", "KrzyStar"]
+                , makeTeamWithMembers 2 "Haskell Bank" ["przembot"]
+                , makeTeamWithMembers 3 "Zygohistoprepromorphisms" []
                 ]
 
             get RootR
             statusIs 200
 
-            htmlAnyContain "td" "Haskell Bank"
-            htmlAnyContain "td" "Monadic Warriors"
-            htmlAnyContain "td" "Zygohistoprepromorphisms"
+            htmlAnyContain "tr" "<td>Haskell Bank</td>\n<td>przembot</td>"
+            htmlAnyContain "tr" "<td>Monadic Warriors</td>\n<td>zyla, buoto, KrzyStar</td>"
+            htmlAnyContain "tr" "<td>Zygohistoprepromorphisms</td>\n<td></td>"
 
         it "should display create team link" $ do
             createUserAndLogin "jdoe" "lambdacard"

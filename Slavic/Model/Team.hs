@@ -3,7 +3,9 @@ module Slavic.Model.Team where
 import ClassyPrelude.Slavic
 import Slavic.Model
 
-type SqlM a = MonadIO m => SqlPersistT m a
+import Text.RawString.QQ (r)
+
+type SqlM a = (Functor m, Monad m, MonadIO m) => SqlPersistT m a
 
 addUserToTeam :: TeamId -> Key User -> SqlM ()
 addUserToTeam teamId userId = update userId [UserTeam =. Just teamId]
@@ -11,6 +13,20 @@ addUserToTeam teamId userId = update userId [UserTeam =. Just teamId]
 removeUserFromTeam :: Key User -> SqlM ()
 removeUserFromTeam userId = update userId [UserTeam =. Nothing]
 
--- | Liat all teams in alphabetic order
-getTeams :: SqlM [Entity Team]
-getTeams = selectList [] [ Asc TeamName ]
+data TeamWithMembers = TeamWithMembers
+    { teamWithMembersId :: TeamId
+    , teamWithMembersName :: Text
+    , teamWithMembersNicks :: [Text]
+    } deriving (Eq, Show)
+
+-- | Liat all teams with members in alphabetic order
+getTeams :: SqlM [TeamWithMembers]
+getTeams = fmap project <$> rawSql [r|
+        SELECT team.id, team.name, COALESCE(array_agg(COALESCE(u.nick, '')), ARRAY[]::text[])
+        FROM team
+        LEFT JOIN "user" u ON u.team = team.id
+        GROUP BY team.id, team.name
+    |] []
+  where
+    project (Single teamId, Single teamName, Single nicks) =
+        TeamWithMembers teamId teamName nicks

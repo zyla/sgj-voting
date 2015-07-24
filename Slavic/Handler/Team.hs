@@ -5,7 +5,7 @@ import Yesod
 import Slavic.Foundation
 import Slavic.Model
 import Slavic.Model.User
-import Slavic.Model.Team (addUserToTeam, removeUserFromTeam, getTeams)
+import Slavic.Model.Team (TeamWithMembers(..), addUserToTeam, removeUserFromTeam, getTeams)
 import Slavic.Forms
 import Slavic.Handler.Util
 import Text.Blaze (text)
