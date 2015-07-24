@@ -12,14 +12,13 @@ createUserWithCreds login password = do
 
 spec :: Spec
 spec = withApp $ do
-    describe "withAuthUser" $ do
-        context "when user is not logged in" $
+    describe "addTeam" $ do
+        context "when user is not logged in" $ --also tests withAuthUser
             it "should redirect to login" $ do
                 get AddTeamR
                 statusIs 303
                 assertHeader "Location" "/login"
 
-    describe "addTeam" $ do
         context "when user is in a team" $
             it "should redirect to root" $ do
                 Entity userId user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
@@ -62,3 +61,34 @@ spec = withApp $ do
                     let Just uTeam = userTeam user
                     liftIO $ teamName uTeam `shouldBe` "test team"
 
+    describe "leaveTeam" $ do
+        context "when user is not logged in" $ --also tests withAuthUser
+            it "should redirect to login" $ do
+                get LeaveTeamR
+                statusIs 303
+                assertHeader "Location" "/login"
+
+        context "when user is in not in any team" $
+            it "should redirect to root" $ do
+                Entity userId user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
+                loginWith "jdoe" "lambdacard"
+
+                get LeaveTeamR
+                statusIs 303
+                assertHeader "Location" "/"
+
+        context "when user is in a team" $
+            it "should remove them from team" $ do
+                Entity userId user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
+                Entity _ team <- runDB $ insertEntity $ Team "test" Nothing
+                runDB $ update userId [UserTeam =. Just team]
+                loginWith "jdoe" "lambdacard"
+
+                request $ do
+                   setMethod "POST"
+                   setUrl LeaveTeamR
+                   addPostParam "confirm" "true"
+                statusIs 303
+
+                Just (Entity _ user) <- runDB $ selectFirst [UserId ==. userId] []
+                liftIO $ userTeam user `shouldBe` Nothing

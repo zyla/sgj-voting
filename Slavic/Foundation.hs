@@ -22,6 +22,7 @@ mkYesodData "App" [parseRoutes|
     /login LoginR GET POST
     /add-team AddTeamR GET POST
     /add-team-thank-you AddTeamSuccessfulR GET
+    /leave-team LeaveTeamR GET POST
 |]
 
 staticFiles "static"

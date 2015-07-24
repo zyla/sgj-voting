@@ -5,8 +5,9 @@ import Yesod
 import Slavic.Foundation
 import Slavic.Model
 import Slavic.Model.User
-import Slavic.Model.Team (addUserToTeam)
+import Slavic.Model.Team (addUserToTeam, removeUserFromTeam)
 import Slavic.Handler.Util
+import Text.Blaze (text)
 
 makeTeamForm :: Html -> MForm Handler (FormResult Team, Widget)
 makeTeamForm = renderTable $ Team
@@ -58,3 +59,26 @@ getAddTeamSuccessfulR = withAuthUser $ \(Entity _ user) ->
     defaultLayout $ do
         setTitle "Team created"
         $(whamletFile "templates/changeteam_successful.hamlet")
+
+
+getLeaveTeamR :: Handler Html
+getLeaveTeamR = withAuthUser $ \(Entity _userId user) -> do
+    case userTeam user of
+        Nothing    -> redirect RootR
+        Just team_ -> do
+            let team = teamName team_
+            defaultLayout $ do
+                setTitle ("Leave team " ++ text team ++ " - SGJ")
+                [whamlet|
+                    <p>Do you really want to leave team #{team}
+                    <form method=post action=@{LeaveTeamR}>
+                        <input type=submit value="Leave team">
+                    |]
+
+postLeaveTeamR :: Handler Html
+postLeaveTeamR = withAuthUser $ \(Entity userId user) -> do
+    case userTeam user of
+        Nothing    -> redirect RootR
+        Just _team -> do
+            runDB $ removeUserFromTeam userId
+            redirect RootR

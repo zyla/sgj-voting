@@ -67,6 +67,7 @@ library
                      , pwstore-fast
                      , mtl-compat
                      , shakespeare
+                     , blaze-markup
 
   default-language:    Haskell2010
 
