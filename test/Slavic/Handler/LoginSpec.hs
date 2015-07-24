@@ -11,7 +11,6 @@ spec = withApp $ do
         it "should display form" $ do
             get LoginR
             statusIs 200
-            printBody
             htmlCount "input[type=text][name=nick]" 1
             htmlCount "input[type=password][name=password]" 1
 
