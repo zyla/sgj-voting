@@ -2,7 +2,7 @@ module Slavic.Handler.Login where
 
 import ClassyPrelude.Slavic
 import Yesod
-import Yesod.Auth hiding (LoginR)
+import Yesod.Auth hiding (LoginR, LogoutR)
 import Slavic.Foundation
 import Slavic.Model
 import Slavic.Model.User
@@ -57,3 +57,8 @@ postLoginR = do
         FormFailure errors -> displayErrors errors
         FormMissing -> displayLoginForm widget enctype
 
+
+getLogoutR :: Handler Html
+getLogoutR = do
+    deleteSession credsKey
+    redirect RootR

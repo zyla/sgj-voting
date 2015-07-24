@@ -2,7 +2,7 @@ module Slavic.Foundation where
 
 import ClassyPrelude
 import Yesod
-import Yesod.Auth hiding (LoginR)
+import Yesod.Auth hiding (LoginR, LogoutR)
 import Text.Hamlet
 import Database.Persist.Sql
 import Yesod.Static (Static, staticFiles)
@@ -20,6 +20,7 @@ mkYesodData "App" [parseRoutes|
     /register RegisterR GET POST
     /register-thank-you RegisterSuccessfulR GET
     /login LoginR GET POST
+    /logout LogoutR GET
     /add-team AddTeamR GET POST
     /add-team-thank-you AddTeamSuccessfulR GET
     /leave-team LeaveTeamR GET POST
