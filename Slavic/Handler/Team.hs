@@ -81,4 +81,12 @@ postLeaveTeamR = withAuthUser $ \(Entity userId user) -> do
         Nothing    -> redirect RootR
         Just _team -> do
             runDB $ removeUserFromTeam userId
-            redirect RootR
+            redirect LeaveTeamSuccessfulR
+
+getLeaveTeamSuccessfulR :: Handler Html
+getLeaveTeamSuccessfulR = withAuthUser $ \(Entity _ user) ->
+    let team = userTeam user in
+    defaultLayout $ do
+        setTitle "Left the team"
+        $(whamletFile "templates/changeteam_successful.hamlet")
+

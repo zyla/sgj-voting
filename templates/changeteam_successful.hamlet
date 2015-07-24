@@ -3,4 +3,6 @@ $maybe team_ <- team
     <p>
         <a href="@{RootR}">Return to the main page
 $nothing
-    <p>You aren't in any team now
+    <p>You are not in any team at the moment
+    <p>
+        <a href="@{RootR}">Return to the main page
