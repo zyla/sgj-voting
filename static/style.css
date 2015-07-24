@@ -23,4 +23,6 @@ tr {
     border-bottom: 1px solid lightgray;
 }
 
+thead tr { font-weight: bold; }
+
 td form { display: inline; }
