@@ -77,7 +77,8 @@ library
 executable slavic
   main-is:             Main.hs
   hs-source-dirs:      main
-  default-extensions: OverloadedStrings
+  default-extensions:  OverloadedStrings
+                     , NoImplicitPrelude
 
   build-depends:       base
                      , slavic-voting
