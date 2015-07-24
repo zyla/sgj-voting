@@ -17,6 +17,7 @@ import Slavic.Foundation
 import Slavic.Handler.Root
 import Slavic.Handler.Registration
 import Slavic.Handler.Login
+import Slavic.Handler.Team
 
 import Network.Wai.Middleware.RequestLogger
 

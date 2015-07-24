@@ -20,6 +20,8 @@ mkYesodData "App" [parseRoutes|
     /register RegisterR GET POST
     /register-thank-you RegisterSuccessfulR GET
     /login LoginR GET POST
+    /add-team AddTeamR GET POST
+    /add-team-thank-you AddTeamSuccessfulR GET
 |]
 
 staticFiles "static"

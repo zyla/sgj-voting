@@ -15,9 +15,12 @@ library
                      , Slavic.Handler.Root
                      , Slavic.Handler.Registration
                      , Slavic.Handler.Login
+                     , Slavic.Handler.Team
+                     , Slavic.Handler.Util
                      , Slavic.Model
                      , Slavic.Model.Category
                      , Slavic.Model.User
+                     , Slavic.Model.Team
                      , Slavic.Forms
 
   other-modules:       ClassyPrelude.Slavic

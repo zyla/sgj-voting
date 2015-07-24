@@ -1,0 +1,6 @@
+$maybe team_ <- team
+    <p>You are now in team #{teamName team_}
+    <p>
+        <a href="@{RootR}">Return to the main page
+$nothing
+    <p>You aren't in any team now
