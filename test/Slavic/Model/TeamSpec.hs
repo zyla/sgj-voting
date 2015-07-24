@@ -11,24 +11,24 @@ spec = withApp $ do
         it "works" $ do
             let team = Team "test team" Nothing
             userE@(Entity userId user) <- runDB $ createUserWithCreds "jdoe" "lambdacard"
-            _ <- runDB $ insert team
+            teamId <- runDB $ insert team
 
             liftIO $ userTeam user `shouldBe` Nothing
 
-            runDB $ addUserToTeam team userId
+            runDB $ addUserToTeam teamId userId
 
             Just (Entity _ user) <- runDB $ selectFirst [] []
 
-            liftIO $ userTeam user `shouldBe` Just team
+            liftIO $ userTeam user `shouldBe` Just teamId
 
     describe "removeUserFromTeam" $ do
         it "removes user from team" $ do
             let team = Team "test team" Nothing
             userE@(Entity userId user) <- runDB $ createUserWithCreds "jdoe" "lambdacard"
-            _ <- runDB $ insert team
-            runDB $ update userId [UserTeam =. Just team]
+            teamId <- runDB $ insert team
+            runDB $ update userId [UserTeam =. Just teamId]
             Just (Entity userId user) <- runDB $ selectFirst [] []
-            liftIO $ userTeam user `shouldBe` Just team
+            liftIO $ userTeam user `shouldBe` Just teamId
 
             runDB $ removeUserFromTeam userId
 

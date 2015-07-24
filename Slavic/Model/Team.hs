@@ -5,7 +5,7 @@ import Slavic.Model
 
 type SqlM a = MonadIO m => SqlPersistT m a
 
-addUserToTeam :: Team -> Key User -> SqlM ()
+addUserToTeam :: TeamId -> Key User -> SqlM ()
 addUserToTeam teamId userId = update userId [UserTeam =. Just teamId]
 
 removeUserFromTeam :: Key User -> SqlM ()

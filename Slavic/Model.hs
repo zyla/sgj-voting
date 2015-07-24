@@ -20,7 +20,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         firstName Text
         lastName  Text
         city      Text
-        team      Team Maybe default Nothing
+        team      TeamId Maybe default Nothing
 
         UniqueUserToken token
         UniqueUserNick nick

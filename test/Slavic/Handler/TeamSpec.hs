@@ -5,6 +5,8 @@ import Slavic.Handler.Team
 import Slavic.Model hiding (get)
 import Slavic.Model.User (makeUser)
 
+import qualified Database.Persist.Sql as Persist
+
 createUserWithCreds login password = do
     tokenId <- insert $ Token "123123"
     insertEntity =<< liftIO (makeUser tokenId login password "John" "Doe" "Warsaw")
@@ -32,8 +34,8 @@ spec = withApp $ do
         context "when user is in a team" $
             it "should redirect to root" $ do
                 Entity userId user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
-                Entity _ team <- runDB $ insertEntity $ Team "test" Nothing
-                runDB $ update userId [UserTeam =. Just team]
+                Entity teamId team <- runDB $ insertEntity $ Team "test" Nothing
+                runDB $ update userId [UserTeam =. Just teamId]
                 loginWith "jdoe" "lambdacard"
 
                 get AddTeamR
@@ -66,7 +68,8 @@ spec = withApp $ do
                     liftIO $ teamName team `shouldBe` "test team"
 
                     Just (Entity _ user) <- runDB $ selectFirst [UserId ==. userId] []
-                    let Just uTeam = userTeam user
+                    let Just uTeamId = userTeam user
+                    Just uTeam <- runDB $ Persist.get uTeamId
                     liftIO $ teamName uTeam `shouldBe` "test team"
 
     describe "leaveTeam" $ do
@@ -88,8 +91,8 @@ spec = withApp $ do
         context "when user is in a team" $
             it "should remove them from team" $ do
                 Entity userId user <- runDB $ createUserWithCreds "jdoe" "lambdacard"
-                Entity _ team <- runDB $ insertEntity $ Team "test" Nothing
-                runDB $ update userId [UserTeam =. Just team]
+                Entity teamId team <- runDB $ insertEntity $ Team "test" Nothing
+                runDB $ update userId [UserTeam =. Just teamId]
                 loginWith "jdoe" "lambdacard"
 
                 request $ do
@@ -128,8 +131,8 @@ spec = withApp $ do
 
         it "should display create team link" $ do
             userId  <- entityKey <$> createUserAndLogin "jdoe" "lambdacard"
-            team <- runDB $ makeTeam 1 "Monadic Warriors" -- FIXME fix this!
-            runDB $ update userId [ UserTeam =. Just (entityVal team) ]
+            team <- runDB $ makeTeam 1 "Monadic Warriors"
+            runDB $ update userId [ UserTeam =. Just (entityKey team) ]
 
             get RootR
             statusIs 200
