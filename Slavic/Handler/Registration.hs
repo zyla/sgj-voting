@@ -49,7 +49,7 @@ postRegisterR = do
     case result of
         FormSuccess user -> do
             registerUser user
-            redirect RootR -- TODO: redirect to success page
+            redirect RegisterSuccessfulR -- TODO: redirect to success page
         FormFailure _errors -> displayRegistrationForm widget enctype
         FormMissing -> displayRegistrationForm widget enctype
 
@@ -65,3 +65,10 @@ displayRegistrationForm widget enctype =
 
 registerUser :: User -> Handler ()
 registerUser = runDB . insert_
+
+
+getRegisterSuccessfulR :: Handler Html
+getRegisterSuccessfulR = do
+    defaultLayout $ do
+        setTitle "Registration completed"
+        $(whamletFile "templates/registration_successful.hamlet")
