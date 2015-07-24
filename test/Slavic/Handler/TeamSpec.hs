@@ -101,8 +101,8 @@ spec = withApp $ do
                 Just (Entity _ user) <- runDB $ selectFirst [UserId ==. userId] []
                 liftIO $ userTeam user `shouldBe` Nothing
 
-    describe "root handler" $ context "when user is logged in" $
-        it "should display teams and link to 'Add team'" $ do
+    describe "root handler" $ context "when user is logged in" $ do
+        it "should display teams" $ do
             createUserAndLogin "jdoe" "lambdacard"
 
             teams <- runDB $ sequence
@@ -114,8 +114,24 @@ spec = withApp $ do
             get RootR
             statusIs 200
 
-            htmlAnyContain "a" "Create new team"
-
             htmlAnyContain "td" "Haskell Bank"
             htmlAnyContain "td" "Monadic Warriors"
             htmlAnyContain "td" "Zygohistoprepromorphisms"
+
+        it "should display create team link" $ do
+            createUserAndLogin "jdoe" "lambdacard"
+
+            get RootR
+            statusIs 200
+
+            htmlAnyContain "a" "Create new team"
+
+        it "should display create team link" $ do
+            userId  <- entityKey <$> createUserAndLogin "jdoe" "lambdacard"
+            team <- runDB $ makeTeam 1 "Monadic Warriors" -- FIXME fix this!
+            runDB $ update userId [ UserTeam =. Just (entityVal team) ]
+
+            get RootR
+            statusIs 200
+
+            htmlAnyContain "p" "You are now in team Monadic Warriors"

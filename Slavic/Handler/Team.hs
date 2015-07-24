@@ -91,8 +91,10 @@ getLeaveTeamSuccessfulR = withAuthUser $ \(Entity _ user) ->
 
 -- | Used in root handler to display team list page when user is logged in.
 displayTeams :: Handler Html
-displayTeams = do
+displayTeams = withAuthUser $ \(Entity _ authUser) -> do
     teams <- runDB getTeams
+    let currentTeam = Entity (toSqlKey 1) <$> userTeam authUser -- FIXME
     defaultLayout $ do
         setTitle "Teams - Slavic Game Jam"
+        $(whamletFile "templates/current_team.hamlet")
         $(whamletFile "templates/teams.hamlet")

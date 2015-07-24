@@ -1,0 +1,5 @@
+$maybe (Entity _ team) <- currentTeam
+    <p>You are now in team #{teamName team}
+$nothing
+    <a href=@{AddTeamR}>Create new team
+
