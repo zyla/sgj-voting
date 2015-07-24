@@ -6,6 +6,9 @@
         <title>#{pageTitle pc}
         ^{pageHead pc}
     <body>
+        <header>
+            $maybe authUser <- maybeAuthUser
+                <p>Welcome, #{userNick $ entityVal authUser}
         <div #wrapper>
             <h1 #title>#{pageTitle pc}
             ^{pageBody pc}

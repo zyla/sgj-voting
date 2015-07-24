@@ -7,6 +7,8 @@ import Text.Hamlet
 import Database.Persist.Sql
 import Yesod.Static (Static, staticFiles)
 
+import Slavic.Model
+
 data App = App
     { appConnectionPool :: ConnectionPool
     , appStatic :: Static
@@ -23,6 +25,7 @@ staticFiles "static"
 
 instance Yesod App where
     defaultLayout widget = do
+        maybeAuthUser <- getAuthUser
         pc <- widgetToPageContent widget
         withUrlRenderer $(hamletFile "templates/main.hamlet")
 
@@ -49,3 +52,11 @@ instance YesodAuth App where
     authHttpManager _ = error "This app doesn't neet HTTP manager"
 
     getAuthId = return . Just . credsIdent
+
+getAuthUser :: Handler (Maybe (Entity User))
+getAuthUser = maybeAuthId >>= \case
+    Just authId -> runDB $ getBy $ UniqueUserNick authId
+    Nothing -> return Nothing
+
+setAuthUserNick :: Text -> Handler ()
+setAuthUserNick = setSession credsKey

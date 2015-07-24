@@ -34,4 +34,8 @@ spec = withApp $ do
                addPostParam "password" "lambdacard"
             statusIs 303
             
-            -- TODO: check if logged in correctly (session contains user ID)
+            get RootR
+            statusIs 200
+            -- This tests also the root handler, but it's the easiest way to
+            -- check if we're logged in.
+            bodyContains "jdoe"

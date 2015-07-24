@@ -38,7 +38,9 @@ postLoginR = do
         FormSuccess LoginRequest{..} -> do
             result <- runDB $ login lr_nick lr_password
             case result of
-                Right _user -> redirect RootR -- TODO: redirect to success page
+                Right (Entity _ User{userNick=nick}) -> do
+                    setAuthUserNick nick
+                    redirect RootR
                 Left errors -> liftIO (print errors) >> displayLoginForm widget enctype
         FormFailure errors -> liftIO (print errors) >> displayLoginForm widget enctype
         FormMissing -> displayLoginForm widget enctype
