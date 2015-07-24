@@ -4,13 +4,22 @@ import ClassyPrelude.Slavic
 import Yesod
 import Slavic.Foundation
 import Slavic.Model
+import Slavic.Model.User
 
+data UserRegistration = UserRegistration
+    { urd_token :: TokenId
+    , urd_nick :: Text
+    , urd_password :: Text
+    , urd_firstName :: Text
+    , urd_lastName :: Text
+    , urd_city :: Text
+    }
 
-registrationForm :: Html -> MForm Handler (FormResult User, Widget)
-registrationForm = renderTable $ User
+registrationForm :: Html -> MForm Handler (FormResult UserRegistration, Widget)
+registrationForm = renderTable $ UserRegistration
     <$> (entityKey <$> areq tokenField (fs "Token" "token") Nothing)
     <*> areq nickField (fs "Nick" "nick") Nothing
-    <*> (encodeUtf8 <$> areq passwordField (fs "Password" "password") Nothing)
+    <*> areq passwordField (fs "Password" "password") Nothing
     <*> areq textField (fs "First name" "first_name") Nothing
     <*> areq textField (fs "Last name" "last_name") Nothing
     <*> areq textField (fs "City" "city") Nothing
@@ -63,9 +72,11 @@ displayRegistrationForm widget enctype =
             <input type=submit value="Submit">
         |]
 
-registerUser :: User -> Handler ()
-registerUser = runDB . insert_
 
+registerUser :: UserRegistration -> Handler ()
+registerUser UserRegistration{..} =
+    runDB $ insert_ =<< liftIO
+        (makeUser urd_token urd_nick urd_password urd_firstName urd_lastName urd_city)
 
 getRegisterSuccessfulR :: Handler Html
 getRegisterSuccessfulR = do

@@ -120,5 +120,6 @@ test-suite test
                    , raw-strings-qq
                    , monad-logger
                    , wai-extra
+                   , containers
 
   default-language:  Haskell2010

@@ -3,6 +3,7 @@ module Slavic.Handler.RegistrationSpec (spec) where
 import TestImport
 import Slavic.Handler.Registration
 import Slavic.Model hiding (get)
+import Slavic.Model.User (verifyPassword)
 
 spec :: Spec
 spec = withApp $ describe "registration" $ do
@@ -42,8 +43,7 @@ spec = withApp $ describe "registration" $ do
             userLastName `shouldBe` "Doe"
             userCity `shouldBe` "Warsaw"
 
-            -- FIXME move to enscripp'd passwords!
-            userPassword `shouldBe` "lambdacard"
+            userPassword `shouldSatisfy` verifyPassword "lambdacard"
 
     context "with nonexistent token" $ it "should return error" $ do
         let dummyToken = "this token does not exist"

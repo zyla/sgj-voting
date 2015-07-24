@@ -15,6 +15,8 @@ import Text.RawString.QQ (r)
 
 import Database.Persist.Sql as X hiding (get)
 import Control.Monad.Logger
+import qualified Control.Monad.Trans.State.Lazy as StateT
+import qualified Data.Map as M
 
 runDB :: SqlPersistM a -> YesodExample App a
 runDB query = do
@@ -63,6 +65,9 @@ assertBodyDoesntContain text =
     withResponse $ \res ->
       liftIO $ assertBool ("Expected body not to contain " ++ text) $
         not $ encodeUtf8 (pack text) `isInfixOf` simpleBody res
+
+resetCookies :: YesodExample site ()
+resetCookies = StateT.modify $ \yed -> yed { yedCookies = M.empty }
             
 loginWith nick password = do
     get LoginR
