@@ -11,3 +11,16 @@ li a { color: #F7CA18; }
 
 footer { position: absolute; bottom: 0px; width: 80%; text-align: right; }
 footer a { color: #ccc; font-size: 12px; }
+
+table {
+    border: 1px solid lightgray;
+    border-collapse: collapse;
+
+    width: 100%;
+}
+
+tr { 
+    border-bottom: 1px solid lightgray;
+}
+
+td form { display: inline; }

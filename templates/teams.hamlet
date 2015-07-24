@@ -3,6 +3,7 @@
 <table>
     <thead><tr>
         <td>Name
+        <td>
     <tbody>
         $forall (Entity teamId team) <- teams
             <tr>
@@ -10,7 +11,7 @@
                 <td>
                     $maybe currentTeamId <- entityKey <$> currentTeam
                         $if currentTeamId == teamId
-                            This is your team.
+                            <a href=@{LeaveTeamR}>Leave team
                     $nothing
                         <form action=@{JoinTeamR teamId} method="POST">
                             <input type="submit" value="Join team">
