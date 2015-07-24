@@ -8,3 +8,6 @@ ul, form { margin-top: 96px; margin-left: 96px }
 ul { font-size: 36px; list-style-type: none; }
 li { margin-top: 48px; }
 li a { color: #F7CA18; }
+
+footer { position: absolute; bottom: 0px; width: 80%; text-align: right; }
+footer a { color: #ccc; font-size: 12px; }

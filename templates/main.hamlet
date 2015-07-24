@@ -12,3 +12,6 @@
         <div #wrapper>
             <h1 #title>#{pageTitle pc}
             ^{pageBody pc}
+        <footer>
+            <p>
+                <a href="http://haskell.org">Powered by Haskell
