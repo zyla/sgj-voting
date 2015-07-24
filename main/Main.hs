@@ -11,5 +11,7 @@ main :: IO ()
 main = do
     -- TODO parameterize also PGUSER, PGHOST etc
     dbname <- fromString <$> fromMaybe "slavic" <$> lookupEnv "PGDATABASE"
+    port <- fromMaybe 3000 <$> (>>= readMay) <$> lookupEnv "PORT"
     let connectionString = "dbname=" ++ dbname
-    runStdoutLoggingT (makeApp connectionString) >>= toWaiApp >>= Warp.run 3000
+    putStrLn $ "Running on port " ++ tshow port
+    runStdoutLoggingT (makeApp connectionString) >>= toWaiApp >>= Warp.run port
