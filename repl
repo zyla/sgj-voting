@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cabal exec ghci -- \
+	-no-global-package-db \
+	-hide-package mtl-2.2.1 \
+	-hide-package transformers-0.4.2.0 \
+	-itest \
+	test/Spec.hs
