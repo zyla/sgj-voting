@@ -63,7 +63,7 @@ vote :: Entity User -- ^ who votes
      -> Int -- ^ vote value
      -> SqlM (Either VotingError (Entity Vote))
 vote (Entity userId user) gameTeamId category value = runExceptT $ do
-    round <- lift getCurrentRound `orThrow` NoCurrentRound
+    _ <- lift getCurrentRound `orThrow` NoCurrentRound
     userTeamId <- pure (userTeam user) `orThrow` NoBucket
     userBucket <- lift (getTeamBucket userTeamId) >>= either throwError return
     gameBucket <- lift (getGameBucket gameTeamId) >>= either throwError return

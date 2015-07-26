@@ -37,10 +37,10 @@ postVoteR = withAuthUser $ \userE@(Entity _ user) -> do
                     then redirect VoteR
                     else do
                         let vote_ cat field = do
-                            cat_val <- lookupPostParam field
-                            case cat_val of
-                                Nothing -> redirect VoteR
-                                Just val -> runSqlMEither $ vote userE teamId cat (readUnsafe val)
+                                cat_val <- lookupPostParam field
+                                case cat_val of
+                                    Nothing -> redirect VoteR
+                                    Just val -> runSqlMEither $ vote userE teamId cat (readUnsafe val)
                         vote_ ZgodnoscZTematem "cat1"
                         vote_ Jakosc "cat2"
                         vote_ Innowacyjnosc "cat3"
