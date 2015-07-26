@@ -7,12 +7,6 @@ import Slavic.Model.User (makeUser)
 
 import qualified Database.Persist.Sql as Persist
 
-createUserAndLogin login password = do
-    user <- runDB $ createUserWithCreds login password
-    loginWith login password
-    statusIs 303
-    return user
-
 makeTeam :: Int64 -> Text -> SqlPersistM (Entity Team)
 makeTeam id name =
     let entity = Entity (toSqlKey id) $ Team name Nothing

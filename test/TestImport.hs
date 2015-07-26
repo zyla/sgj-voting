@@ -84,3 +84,9 @@ loginWith nick password = do
 createUserWithCreds login password = do
     tokenId <- insert $ Token "123123"
     insertEntity =<< liftIO (makeUser tokenId login password "John" "Doe" "Warsaw")
+
+createUserAndLogin login password = do
+    user <- runDB $ createUserWithCreds login password
+    loginWith login password
+    statusIs 303
+    return user
