@@ -98,6 +98,7 @@ getTeamR :: TeamId -> Handler Html
 getTeamR teamId = do
     team <- fromMaybeOrNotFound =<< runDB (get teamId)
     members <- runDB $ selectList [UserTeam ==. Just teamId] [Asc UserId]
+    maybeGame <- runDB $ map join $ traverse get $ teamGame team
     defaultLayout $ do
         setTitle $ "Team " ++ text (teamName team) ++ " - Slavic Game Jam"
         $(whamletFile "templates/team.hamlet")

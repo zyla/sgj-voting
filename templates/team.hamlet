@@ -1,2 +1,4 @@
 <h2>Team #{teamName team}
 <p>Members: #{intercalate ", " $ map (userNick . entityVal) members}
+$maybe game <- maybeGame
+    <p>Game: #{gameTitle game}

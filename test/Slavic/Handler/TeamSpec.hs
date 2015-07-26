@@ -30,6 +30,13 @@ makeTeamWithMembers id name members = do
 
     return entity
 
+addTestTeams = runDB $ sequence
+    [ makeTeamWithMembers 1 "Monadic Warriors" ["zyla", "buoto", "KrzyStar"]
+    , makeTeamWithMembers 2 "Haskell Bank" ["przembot"]
+    , makeTeamWithMembers 3 "Zygohistoprepromorphisms" []
+    ]
+
+
 spec :: Spec
 spec = withApp $ do
     describe "addTeam" $ do
@@ -116,12 +123,7 @@ spec = withApp $ do
         it "should display teams with members" $ do
             createUserAndLogin "jdoe" "lambdacard"
 
-            teams <- runDB $ sequence
-                [ makeTeamWithMembers 1 "Monadic Warriors" ["zyla", "buoto", "KrzyStar"]
-                , makeTeamWithMembers 2 "Haskell Bank" ["przembot"]
-                , makeTeamWithMembers 3 "Zygohistoprepromorphisms" []
-                ]
-
+            teams <- addTestTeams
             get RootR
             statusIs 200
 
@@ -175,16 +177,30 @@ spec = withApp $ do
                 liftIO $ userTeam user `shouldBe` Just newTeamId
 
     describe "teamView" $ do
-        context "when team has no game" $ it "should display only team name and members" $ do
-            runDB $ sequence $
-                [ makeTeamWithMembers 1 "Monadic Warriors" ["zyla", "buoto", "KrzyStar"]
-                , makeTeamWithMembers 2 "Haskell Bank" ["przembot"]
-                ]
-
-            get $ TeamR $ toSqlKey 1
-            statusIs 200
-
+        let assertTestTeamDisplayed =  do
             htmlAllContain "title" "Team Monadic Warriors - Slavic Game Jam"
 
             htmlAllContain "h2" "Team Monadic Warriors"
             htmlAnyContain "p" "Members: zyla, buoto, KrzyStar"
+
+        context "when team has no game" $ it "should display only team name and members" $ do
+            addTestTeams
+
+            get $ TeamR $ toSqlKey 1
+            statusIs 200
+
+            assertTestTeamDisplayed
+
+        context "when team has game" $ it "should display game name" $ do
+            addTestTeams
+            let teamId = toSqlKey 1
+
+            runDB $ do
+                gameId <- insert $ Game "Cool game"
+                update teamId [TeamGame =. Just gameId]
+
+            get $ TeamR teamId
+            statusIs 200
+            assertTestTeamDisplayed
+
+            htmlAnyContain "p" "Game: Cool game"
