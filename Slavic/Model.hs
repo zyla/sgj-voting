@@ -52,17 +52,17 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         round Int
 
     VotingBucketTeam
-        team   Team
-        bucket VotingBucket
+        team   TeamId
+        bucket VotingBucketId
 
     VotingBucketGame
-        game   Game
-        bucket VotingBucket
+        team   TeamId
+        bucket VotingBucketId
 
     Vote
-        owner    User
+        owner    UserId
         value    Int
-        game     Game
-        bucket   VotingBucket
+        game     TeamId
+        bucket   VotingBucketId
         category Category
 |]
