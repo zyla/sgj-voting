@@ -19,6 +19,8 @@ import qualified Control.Monad.Trans.State.Lazy as StateT
 import qualified Data.Map as M
 import Slavic.Model.User (makeUser)
 
+import Test.HUnit (assertFailure)
+
 runDB :: SqlPersistM a -> YesodExample App a
 runDB query = do
     app <- getTestYesod
@@ -95,3 +97,15 @@ assertRedirectsToLogin route = do
     get route
     statusIs 303
     assertHeader "Location" "/login"
+
+createTestUser :: SqlM (Entity User)
+createTestUser = createUserWithCreds "test" "test"
+
+-- Throw an error if given Either value is a Left. Else return the wrapped value.
+assertRight :: (MonadIO m, Show err) => Either err a -> m a
+assertRight (Right result) = return result
+assertRight (Left err) = liftIO $ assertFailure ("Returned error: " ++ show err) >> error "shouldn't happen"
+
+-- Monadic version of assertRight
+assertRightM :: (MonadIO m, Show err) => m (Either err a) -> m a
+assertRightM = (>>= assertRight)

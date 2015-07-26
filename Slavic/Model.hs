@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 module Slavic.Model (
     module Slavic.Model
+  , module Slavic.Model.Category
   , module Database.Persist.Sql
 ) where
 
@@ -50,6 +51,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     VotingBucket
         name  Text
         round Int
+        deriving Eq Show
 
     VotingBucketTeam
         team   TeamId
@@ -65,6 +67,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         game     TeamId
         bucket   VotingBucketId
         category Category
+        deriving Eq Show
 
     -- There should be at most one row in this table.
     CurrentRound

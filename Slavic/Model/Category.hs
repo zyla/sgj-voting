@@ -1,5 +1,5 @@
 module Slavic.Model.Category (
-    Category
+    Category(..)
 ) where
 
 import ClassyPrelude
