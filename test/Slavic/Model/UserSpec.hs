@@ -24,7 +24,3 @@ spec = withApp $ do
 
             result <- runDB $ login "jdoe" "badpassword"
             liftIO $ result `shouldBe` Left "Invalid nick/password"
-
-createUserWithCreds login password = do
-    tokenId <- insert $ Token "123123"
-    insertEntity =<< liftIO (makeUser tokenId login password "John" "Doe" "Warsaw")

@@ -35,7 +35,3 @@ spec = withApp $ do
             Just (Entity _ user) <- runDB $ selectFirst [] []
 
             liftIO $ userTeam user `shouldBe` Nothing
-
-createUserWithCreds login password = do
-    tokenId <- insert $ Token "123123"
-    insertEntity =<< liftIO (makeUser tokenId login password "John" "Doe" "Warsaw")

@@ -17,6 +17,7 @@ import Database.Persist.Sql as X hiding (get)
 import Control.Monad.Logger
 import qualified Control.Monad.Trans.State.Lazy as StateT
 import qualified Data.Map as M
+import Slavic.Model.User (makeUser)
 
 runDB :: SqlPersistM a -> YesodExample App a
 runDB query = do
@@ -79,3 +80,7 @@ loginWith nick password = do
        addCSRFToken
        addPostParam "nick" nick
        addPostParam "password" password
+
+createUserWithCreds login password = do
+    tokenId <- insert $ Token "123123"
+    insertEntity =<< liftIO (makeUser tokenId login password "John" "Doe" "Warsaw")
