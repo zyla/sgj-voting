@@ -2,6 +2,10 @@
 <p>Members: #{intercalate ", " $ map (userNick . entityVal) members}
 $maybe game <- maybeGame
     <p>Game: #{gameTitle game}
+    $maybe screenshot <- gameScreenshotUrl game
+        <p>
+            <a href=#{screenshot}>
+                <img .screenshot src=#{screenshot}>
 
 $if ownTeam
     <a href=@{EditGameR}>Edit game information 

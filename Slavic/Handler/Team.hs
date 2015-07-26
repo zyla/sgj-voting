@@ -147,3 +147,4 @@ displayEditGameForm widget enctype =
 editGameForm :: Maybe Game -> Html -> MForm Handler (FormResult Game, Widget)
 editGameForm game = renderTable $ Game
     <$> areq textField (mkFieldSettings "Game title" "title") (gameTitle <$> game)
+    <*> aopt textField (mkFieldSettings "Screenshot URL" "screenshot_url") (gameScreenshotUrl <$> game)

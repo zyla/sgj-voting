@@ -18,3 +18,5 @@ table.teams { border-collapse: collapse; width: 100%; }
 table.teams tr { border-bottom: 1px solid lightgray; }
 table.teams thead tr { font-weight: bold; border-bottom: 1px solid gray; }
 table.teams td form { display: inline; }
+
+img.screenshot { max-width: 640px; max-height: 480px; }

@@ -42,8 +42,8 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         deriving Eq Show
 
     Game
-        title  Text
---        screenshot Text
+        title Text
+        screenshotUrl Text Maybe
         UniqueGameTitle title
         deriving Eq Show
 

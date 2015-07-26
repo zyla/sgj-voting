@@ -192,17 +192,19 @@ spec = withApp $ do
 
             assertTestTeamDisplayed
 
-        context "when team has game" $ it "should display game name" $ do
+        context "when team has game" $ it "should display game name and screenshot" $ do
             createUserAndLogin "jdoe" "lambdacard"
             addTestTeams
 
-            runDB $ update monadicWarriorsId [TeamGame =. Just (Game "Cool game")]
+            runDB $ update monadicWarriorsId
+                [TeamGame =. Just (Game "Cool game" $ Just "http://zyla.neutrino.re/share/waves.png")]
 
             get $ TeamR monadicWarriorsId
             statusIs 200
             assertTestTeamDisplayed
 
             htmlAnyContain "p" "Game: Cool game"
+            htmlCount "img.screenshot[src=http://zyla.neutrino.re/share/waves.png]" 1
 
         context "when user views other team" $ it "should not display edit button" $ do
             addTestTeams
@@ -240,13 +242,14 @@ spec = withApp $ do
             statusIs 200
             htmlAllContain "title" "Edit game information - SGJ"
             htmlCount "input[type=text][name=title]" 1
+            htmlCount "input[type=text][name=screenshot_url]" 1
             htmlCount "input[type=submit][value=Save]" 1
 
         context "when team has game" $ it "should display form with filled values" $ do
             addTestTeams
             loginWith "zyla" "zyla"
 
-            runDB $ update monadicWarriorsId [TeamGame =. Just (Game "Cool game")]
+            runDB $ update monadicWarriorsId [TeamGame =. Just (Game "Cool game" Nothing)]
 
             get EditGameR
             statusIs 200
@@ -270,4 +273,23 @@ spec = withApp $ do
             assertHeader "Location" "/teams/1"
 
             team <- runDB $ Persist.get monadicWarriorsId
-            liftIO $ (team >>= teamGame) `shouldBe` Just (Game "test game")
+            liftIO $ (team >>= teamGame) `shouldBe` Just (Game "test game" Nothing)
+
+        it "should update game with screenshot" $ do
+            addTestTeams
+            loginWith "zyla" "zyla"
+
+            get EditGameR
+
+            request $ do
+               setMethod "POST"
+               setUrl EditGameR
+               addCSRFToken
+               addPostParam "title" "test game"
+               addPostParam "screenshot_url" "http://zyla.neutrino.re/share/waves.png"
+            statusIs 303
+            assertHeader "Location" "/teams/1"
+
+            team <- runDB $ Persist.get monadicWarriorsId
+            liftIO $ (team >>= teamGame) `shouldBe`
+                Just (Game "test game" $ Just "http://zyla.neutrino.re/share/waves.png")
