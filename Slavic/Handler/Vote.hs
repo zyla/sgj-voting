@@ -50,4 +50,4 @@ postVoteR = withAuthUser $ \userE@(Entity _ user) -> do
 readUnsafe :: Read a => Text -> a
 readUnsafe str = case readMay str of
     Just a -> a
-    Nothing -> error "SYF"
+    Nothing -> error $ show str

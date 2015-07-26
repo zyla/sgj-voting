@@ -18,7 +18,7 @@
                     $maybe currentTeamId <- entityKey <$> currentTeam
                         $if currentTeamId /= teamId
                             <form action=@{VoteR} method="POST">
-                                <input type="hidden" name="teamId" value="#{tshow teamId}">
+                                <input type="hidden" name="teamId" value="#{tshow $ fromSqlKey teamId}">
                                 <select name="cat1">
                                     <option value="1">1
                                     <option value="2">2
