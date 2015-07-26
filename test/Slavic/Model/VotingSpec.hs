@@ -13,6 +13,8 @@ createTestUserWithTeam = do
 
 mkGame name = Game name Nothing
 
+dummyCategory = Innowacyjnosc
+
 spec :: Spec
 spec = withApp $ do
     describe "getCurrentRound" $ do
@@ -30,7 +32,7 @@ spec = withApp $ do
             result <- runDB $ do
                 user <- createTestUser
                 otherTeamId <- insert $ Team "other team" Nothing
-                vote user otherTeamId Graphics 5
+                vote user otherTeamId dummyCategory 5
 
             liftIO $ result `shouldBe` Left NoCurrentRound
 
@@ -49,7 +51,7 @@ spec = withApp $ do
                 diffRoundBucketId <- insert $ VotingBucket "test2" 2
                 insert_ $ VotingBucketTeam teamId diffRoundBucketId
 
-                vote user gameTeamId Graphics 5
+                vote user gameTeamId dummyCategory 5
 
             liftIO $ result `shouldBe` Left NoBucket
 
@@ -65,7 +67,7 @@ spec = withApp $ do
                 otherBucketId <- insert $ VotingBucket "test2" 1
                 insert_ $ VotingBucketGame gameTeamId otherBucketId
 
-                vote user gameTeamId Graphics 5
+                vote user gameTeamId dummyCategory 5
 
             liftIO $ result `shouldBe` Left NoBucket
 
@@ -79,12 +81,12 @@ spec = withApp $ do
                 insert_ $ VotingBucketTeam teamId bucketId
                 insert_ $ VotingBucketGame gameTeamId bucketId
 
-                result <- vote user gameTeamId Graphics 5
+                result <- vote user gameTeamId dummyCategory 5
                 return (result, gameTeamId, entityKey user)
 
             Entity voteId Vote{..} <- assertRight result
             liftIO $ do
-                voteCategory `shouldBe` Graphics
+                voteCategory `shouldBe` dummyCategory
                 voteValue `shouldBe` 5
                 voteGame `shouldBe` gameTeamId
                 voteOwner `shouldBe` userId
@@ -99,16 +101,16 @@ spec = withApp $ do
                 insert_ $ VotingBucketTeam teamId bucketId
                 insert_ $ VotingBucketGame gameTeamId bucketId
 
-                oldVoteId <- insert $ Vote (entityKey user) 1 gameTeamId bucketId Graphics 
+                oldVoteId <- insert $ Vote (entityKey user) 1 gameTeamId bucketId dummyCategory 
 
-                result <- vote user gameTeamId Graphics 5
+                result <- vote user gameTeamId dummyCategory 5
                 return (result, gameTeamId, entityKey user, oldVoteId)
 
             Entity voteId _ <- assertRight result
             Just Vote{..} <- runDB $ Persist.get voteId
             liftIO $ do
                 voteId `shouldBe` oldVoteId
-                voteCategory `shouldBe` Graphics
+                voteCategory `shouldBe` dummyCategory
                 voteValue `shouldBe` 5
                 voteGame `shouldBe` gameTeamId
                 voteOwner `shouldBe` userId

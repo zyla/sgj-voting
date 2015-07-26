@@ -6,10 +6,16 @@ import ClassyPrelude
 import Database.Persist.Sql
 import Database.Persist.TH
 
--- FIXME proper categories
 data Category =
-      Graphics
-    | Innovation
-    | Gameplay
+      ZgodnoscZTematem
+    | Jakosc
+    | Innowacyjnosc
+    | Grywalnosc
     deriving (Show, Eq, Read, Enum, Bounded)
 derivePersistField "Category"
+
+categoryDescription :: Category -> Text
+categoryDescription ZgodnoscZTematem = "Zgodność z tematem"
+categoryDescription Jakosc = "Jakosc"
+categoryDescription Innowacyjnosc = "Innowacyjnosc"
+categoryDescription Grywalnosc = "Grywalnosc"
