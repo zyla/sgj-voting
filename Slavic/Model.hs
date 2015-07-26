@@ -26,8 +26,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 
         UniqueUserToken token
         UniqueUserNick nick
-        deriving Show
-        deriving Eq
+        deriving Eq Show
 
     Team
         name Text
@@ -39,15 +38,13 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         -- Kept for safer migration
         oldGame Game Maybe MigrationOnly sql=game
 
-        deriving Show
-        deriving Eq
+        deriving Eq Show
 
     Game
         title  Text
 --        screenshot Text
         UniqueGameTitle title
-        deriving Show
-        deriving Eq
+        deriving Eq Show
 
     VotingBucket
         name  Text
