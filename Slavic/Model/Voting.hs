@@ -70,4 +70,5 @@ vote (Entity userId user) gameTeamId category value = runExceptT $ do
 
     when (entityKey userBucket /= entityKey gameBucket) $ throwError NoBucket
 
-    error "TODO"
+    let vote = Vote userId value gameTeamId (entityKey userBucket) category
+    lift $ upsert vote [VoteValue =. value]

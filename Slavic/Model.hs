@@ -67,6 +67,8 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         game     TeamId
         bucket   VotingBucketId
         category Category
+
+        UniqueVote owner bucket game category
         deriving Eq Show
 
     -- There should be at most one row in this table.

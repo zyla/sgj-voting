@@ -68,3 +68,47 @@ spec = withApp $ do
                 vote user gameTeamId Graphics 5
 
             liftIO $ result `shouldBe` Left NoBucket
+
+        context "when there's no vote" $ it "should create vote" $ do
+            (result, gameTeamId, userId) <- runDB $ do
+                insert_ $ CurrentRound 1
+                (user, teamId) <- createTestUserWithTeam
+                gameTeamId <- insert $ Team "team1" $ Just $ mkGame "game for voting"
+
+                bucketId <- insert $ VotingBucket "test" 1
+                insert_ $ VotingBucketTeam teamId bucketId
+                insert_ $ VotingBucketGame gameTeamId bucketId
+
+                result <- vote user gameTeamId Graphics 5
+                return (result, gameTeamId, entityKey user)
+
+            Entity voteId Vote{..} <- assertRight result
+            liftIO $ do
+                voteCategory `shouldBe` Graphics
+                voteValue `shouldBe` 5
+                voteGame `shouldBe` gameTeamId
+                voteOwner `shouldBe` userId
+
+        context "when there's a vote" $ it "should update vote" $ do
+            (result, gameTeamId, userId, oldVoteId) <- runDB $ do
+                insert_ $ CurrentRound 1
+                (user, teamId) <- createTestUserWithTeam
+                gameTeamId <- insert $ Team "team1" $ Just $ mkGame "game for voting"
+
+                bucketId <- insert $ VotingBucket "test" 1
+                insert_ $ VotingBucketTeam teamId bucketId
+                insert_ $ VotingBucketGame gameTeamId bucketId
+
+                oldVoteId <- insert $ Vote (entityKey user) 1 gameTeamId bucketId Graphics 
+
+                result <- vote user gameTeamId Graphics 5
+                return (result, gameTeamId, entityKey user, oldVoteId)
+
+            Entity voteId _ <- assertRight result
+            Just Vote{..} <- runDB $ Persist.get voteId
+            liftIO $ do
+                voteId `shouldBe` oldVoteId
+                voteCategory `shouldBe` Graphics
+                voteValue `shouldBe` 5
+                voteGame `shouldBe` gameTeamId
+                voteOwner `shouldBe` userId
