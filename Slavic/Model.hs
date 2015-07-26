@@ -65,4 +65,11 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         game     TeamId
         bucket   VotingBucketId
         category Category
+
+    -- There should be at most one row in this table.
+    CurrentRound
+        -- Global current voting round
+        round Int
+        UniqueCurrentRound
+        deriving Eq Show
 |]

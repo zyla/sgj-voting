@@ -21,6 +21,7 @@ library
                      , Slavic.Model.Category
                      , Slavic.Model.User
                      , Slavic.Model.Team
+                     , Slavic.Model.Voting
                      , Slavic.Forms
 
   other-modules:       ClassyPrelude.Slavic
