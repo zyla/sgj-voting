@@ -5,8 +5,6 @@ import Slavic.Model
 
 import Text.RawString.QQ (r)
 
-type SqlM a = (Functor m, Monad m, MonadIO m) => SqlPersistT m a
-
 addUserToTeam :: TeamId -> Key User -> SqlM ()
 addUserToTeam teamId userId = update userId [UserTeam =. Just teamId]
 

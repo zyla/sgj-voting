@@ -8,6 +8,8 @@ import Database.Persist.Sql
 import Database.Persist.TH
 import Slavic.Model.Category
 
+type SqlM a = (Functor m, Monad m, MonadIO m) => SqlPersistT m a
+
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     Token
         token Text
