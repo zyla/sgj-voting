@@ -8,19 +8,24 @@ import Slavic.Model.User
 import Slavic.Model.Team (TeamWithMembers(..), addUserToTeam, removeUserFromTeam, getTeams)
 import Slavic.Model.Voting
 import Slavic.Handler.Util (withAuthUser)
+import Text.Blaze (preEscapedText)
 
 getVoteR :: Handler Html
-getVoteR = withAuthUser $ \(Entity _ authUser) -> do
+getVoteR = withAuthUser $ \(Entity userId authUser) -> do
     case userTeam authUser of
         Nothing -> redirect RootR
         Just team -> do
             Entity bucketId bucket <- runSqlMEither $ getTeamBucket team
-            games <- runDB $ getGamesFromBucket bucketId
+            games <- runDB $ getGamesFromBucket userId bucketId
             currentTeam <- case userTeam authUser of
                 Nothing -> return Nothing
                 Just teamId -> runDB $ fmap (Entity teamId) <$> get teamId
             defaultLayout $ do
                 setTitle "Voting - Slavic Game Jam"
+                let renderOptions val = preEscapedText $ concat $ map (\i ->
+                        concat [ "<option val=\"", tshow i, "\" "
+                             , if i==val then "selected" else ""
+                             , ">", tshow i, "</option>"]) [1,2,3,4,5]
                 $(whamletFile "templates/voting.hamlet")
 
 postVoteR :: Handler Html
@@ -41,10 +46,10 @@ postVoteR = withAuthUser $ \userE@(Entity _ user) -> do
                                 case cat_val of
                                     Nothing -> redirect VoteR
                                     Just val -> runSqlMEither $ vote userE teamId cat (readUnsafe val)
-                        vote_ ZgodnoscZTematem "cat1"
-                        vote_ Jakosc "cat2"
-                        vote_ Innowacyjnosc "cat3"
-                        vote_ Grywalnosc "cat4"
+                        _ <- vote_ ZgodnoscZTematem "cat1"
+                        _ <- vote_ Jakosc "cat2"
+                        _ <- vote_ Innowacyjnosc "cat3"
+                        _ <- vote_ Grywalnosc "cat4"
                         redirect VoteR
 
 readUnsafe :: Read a => Text -> a

@@ -41,19 +41,27 @@ data TeamWithGame = TeamWithGame
   { twg_id :: TeamId
   , twg_name :: Text
   , twg_game :: Game
+  , twg_cat1 :: Int
+  , twg_cat2 :: Int
+  , twg_cat3 :: Int
+  , twg_cat4 :: Int
   }
 
 -- | Liat all teams with game in alphabetic order
-getGamesFromBucket :: VotingBucketId -> SqlM [TeamWithGame]
-getGamesFromBucket bucket = fmap project <$> rawSql [r|
-        SELECT team.id, team.name, team.game
+getGamesFromBucket :: UserId -> VotingBucketId -> SqlM [TeamWithGame]
+getGamesFromBucket user bucket = fmap project <$> (rawSql [r|
+        SELECT team.id, team.name, team.game,
+              coalesce((select value from vote where "owner"=? and "bucket"=? and "game"=team.id and "category"='ZgodnoscZTematem'), 1),
+              coalesce((select value from vote where "owner"=? and "bucket"=? and "game"=team.id and "category"='Jakosc'), 1),
+              coalesce((select value from vote where "owner"=? and "bucket"=? and "game"=team.id and "category"='Innowacyjnosc'), 1),
+              coalesce((select value from vote where "owner"=? and "bucket"=? and "game"=team.id and "category"='Grywalnosc'), 1)
         FROM team
         INNER JOIN voting_bucket_team vbt ON team.id = vbt.team
         WHERE vbt.bucket = ?
-    |] [toPersistValue bucket]
+    |] $ (mconcat $ replicate 4 [toPersistValue user, toPersistValue bucket]) ++ [toPersistValue bucket])
   where
-    project (Single teamId, Single teamName, Single game) =
-        TeamWithGame teamId teamName game
+    project (Single teamId, Single teamName, Single game, Single c1, Single c2, Single c3, Single c4) =
+        TeamWithGame teamId teamName game c1 c2 c3 c4
 
 -- | Place a vote. If user has already voted for this game in this category and
 -- current round, the vote is updated.
