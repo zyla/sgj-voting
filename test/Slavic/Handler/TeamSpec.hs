@@ -143,7 +143,7 @@ spec = withApp $ do
             get RootR
             statusIs 200
 
-            htmlAnyContain "p" "You are now in team Monadic Warriors"
+            htmlAnyContain "p" "<span>You are now in team</span>\n<a href=\"/teams/1\">Monadic Warriors</a>"
 
     describe "joinTeam" $ do
         context "when user is in a team" $
@@ -173,11 +173,11 @@ spec = withApp $ do
                 liftIO $ userTeam user `shouldBe` Just newTeamId
 
     describe "teamView" $ do
-        let assertTestTeamDisplayed =  do
-            htmlAllContain "title" "Team Monadic Warriors - Slavic Game Jam"
+        let assertTestTeamDisplayed = do
+                htmlAllContain "title" "Team Monadic Warriors - Slavic Game Jam"
 
-            htmlAllContain "h2" "Team Monadic Warriors"
-            htmlAnyContain "p" "Members: zyla, buoto, KrzyStar"
+                htmlAllContain "h2" "Team Monadic Warriors"
+                htmlAnyContain "p" "Members: zyla, buoto, KrzyStar"
 
         context "when user is not logged in" $ it "should redirect to login" $ do
             addTestTeams
