@@ -56,7 +56,7 @@ getGamesFromBucket user bucket = fmap project <$> (rawSql [r|
               coalesce((select value from vote where "owner"=? and "bucket"=? and "game"=team.id and "category"='Innowacyjnosc'), 1),
               coalesce((select value from vote where "owner"=? and "bucket"=? and "game"=team.id and "category"='Grywalnosc'), 1)
         FROM team
-        INNER JOIN voting_bucket_team vbt ON team.id = vbt.team
+        INNER JOIN voting_bucket_game vbt ON team.id = vbt.team
         WHERE vbt.bucket = ?
     |] $ (mconcat $ replicate 4 [toPersistValue user, toPersistValue bucket]) ++ [toPersistValue bucket])
   where
