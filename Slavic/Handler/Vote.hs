@@ -24,4 +24,30 @@ getVoteR = withAuthUser $ \(Entity _ authUser) -> do
                 $(whamletFile "templates/voting.hamlet")
 
 postVoteR :: Handler Html
-postVoteR = defaultLayout $ return ()
+postVoteR = withAuthUser $ \userE@(Entity _ user) -> do
+    case userTeam user of
+        Nothing -> redirect RootR
+        Just team -> do
+            formTeamId <- lookupPostParam "teamId"
+            case formTeamId of
+                Nothing -> redirect VoteR
+                Just formTeamId_ ->
+                    let teamId = toSqlKey . readUnsafe $ formTeamId_
+                    in if team == teamId
+                    then redirect VoteR
+                    else do
+                        let vote_ cat field = do
+                            cat_val <- lookupPostParam field
+                            case cat_val of
+                                Nothing -> redirect VoteR
+                                Just val -> runSqlMEither $ vote userE teamId cat (readUnsafe val)
+                        vote_ ZgodnoscZTematem "cat1"
+                        vote_ Jakosc "cat2"
+                        vote_ Innowacyjnosc "cat3"
+                        vote_ Grywalnosc "cat4"
+                        redirect VoteR
+
+readUnsafe :: Read a => Text -> a
+readUnsafe str = case readMay str of
+    Just a -> a
+    Nothing -> error "SYF"

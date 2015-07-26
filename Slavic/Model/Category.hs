@@ -13,9 +13,3 @@ data Category =
     | Grywalnosc
     deriving (Show, Eq, Read, Enum, Bounded)
 derivePersistField "Category"
-
-categoryDescription :: Category -> Text
-categoryDescription ZgodnoscZTematem = "Zgodność z tematem"
-categoryDescription Jakosc = "Jakosc"
-categoryDescription Innowacyjnosc = "Innowacyjnosc"
-categoryDescription Grywalnosc = "Grywalnosc"

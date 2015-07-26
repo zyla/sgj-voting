@@ -5,7 +5,7 @@
         <td>Team
         <td>Game
         <td>Screenshot
-        <td>Gameplay 
+        <td>Topic relevance, Quality, Innovation, Gameplay
     <tbody>
         $forall (TeamWithGame teamId teamName game) <- games
             <tr>
