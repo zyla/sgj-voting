@@ -11,7 +11,7 @@ li a { color: #F7CA18; }
 
 #logout { float: right; }
 
-footer { position: absolute; bottom: 0px; width: 80%; text-align: right; }
+footer { width: 80%; text-align: right; }
 footer a { color: #ccc; font-size: 12px; }
 
 table.teams { border-collapse: collapse; width: 100%; }
