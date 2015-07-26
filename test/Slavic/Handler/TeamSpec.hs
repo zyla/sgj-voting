@@ -198,8 +198,7 @@ spec = withApp $ do
             let teamId = toSqlKey 1
 
             runDB $ do
-                gameId <- insert $ Game "Cool game"
-                update teamId [TeamGame =. Just gameId]
+                update teamId [TeamGame =. Just (Game "Cool game")]
 
             get $ TeamR teamId
             statusIs 200
