@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveDataTypeable #-}
 module Slavic.Model (
     module Slavic.Model
   , module Database.Persist.Sql
@@ -26,7 +27,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 
         UniqueUserToken token
         UniqueUserNick nick
-        deriving Eq Show
+        deriving Eq Show Typeable
 
     Team
         name Text

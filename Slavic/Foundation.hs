@@ -46,23 +46,21 @@ instance RenderMessage App FormMessage where
 
 
 instance YesodAuth App where
-    type AuthId App = Text
+    type AuthId App = UserId
 
     loginDest _ = RootR
     logoutDest _ = RootR
-
-    maybeAuthId = lookupSession credsKey 
 
     authPlugins _ = []
 
     authHttpManager _ = error "This app doesn't need HTTP manager"
 
-    getAuthId = return . Just . credsIdent
+    getAuthId = runDB . map (map entityKey) . getBy . UniqueUserNick . credsIdent
+
+instance YesodAuthPersist App
 
 getAuthUser :: Handler (Maybe (Entity User))
-getAuthUser = maybeAuthId >>= \case
-    Just authId -> runDB $ getBy $ UniqueUserNick authId
-    Nothing -> return Nothing
+getAuthUser = map (uncurry Entity) <$> maybeAuthPair
 
 setAuthUserNick :: Text -> Handler ()
-setAuthUserNick = setSession credsKey
+setAuthUserNick = setCreds False . flip (Creds "") []
