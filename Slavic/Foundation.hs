@@ -70,3 +70,7 @@ getAuthUser = map (uncurry Entity) <$> maybeAuthPair
 
 setAuthUserNick :: Text -> Handler ()
 setAuthUserNick = setCreds False . flip (Creds "") []
+
+runSqlMEither :: Show e => SqlM (Either e a) -> Handler a
+runSqlMEither a = runDB a >>= either (invalidArgs . return . tshow) return
+

@@ -28,3 +28,4 @@ getTeams = fmap project <$> rawSql [r|
   where
     project (Single teamId, Single teamName, Single nicks) =
         TeamWithMembers teamId teamName nicks
+
