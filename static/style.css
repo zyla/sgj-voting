@@ -17,6 +17,6 @@ footer a { color: #ccc; font-size: 12px; }
 table.teams { border-collapse: collapse; width: 100%; }
 table.teams tr { border-bottom: 1px solid lightgray; }
 table.teams thead tr { font-weight: bold; border-bottom: 1px solid gray; }
-table.teams td form { display: inline; }
+table.teams td form { display: inline; margin: 0; white-space: nowrap; }
 
 img.screenshot { max-width: 640px; max-height: 480px; }
