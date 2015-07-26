@@ -8,7 +8,8 @@
     <tbody>
         $forall (TeamWithMembers teamId teamName members) <- teams
             <tr>
-                <td>#{teamName}
+                <td>
+                    <a href=@{TeamR teamId}>#{teamName}
                 <td>#{intercalate ", " members}
                 <td>
                     $maybe currentTeamId <- entityKey <$> currentTeam

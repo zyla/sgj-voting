@@ -93,3 +93,15 @@ postJoinTeamR teamId = withAuthUser $ \(Entity userId user) -> do
             runDB $ addUserToTeam teamId userId
             redirect RootR
         Just _team -> redirect RootR
+
+getTeamR :: TeamId -> Handler Html
+getTeamR teamId = do
+    team <- fromMaybeOrNotFound =<< runDB (get teamId)
+    members <- runDB $ selectList [UserTeam ==. Just teamId] [Asc UserId]
+    defaultLayout $ do
+        setTitle $ "Team " ++ text (teamName team) ++ " - Slavic Game Jam"
+        $(whamletFile "templates/team.hamlet")
+
+fromMaybeOrNotFound :: Maybe a -> Handler a
+fromMaybeOrNotFound Nothing = notFound
+fromMaybeOrNotFound (Just a) = pure a

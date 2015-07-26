@@ -125,9 +125,9 @@ spec = withApp $ do
             get RootR
             statusIs 200
 
-            htmlAnyContain "tr" "<td>Haskell Bank</td>\n<td>przembot</td>"
-            htmlAnyContain "tr" "<td>Monadic Warriors</td>\n<td>zyla, buoto, KrzyStar</td>"
-            htmlAnyContain "tr" "<td>Zygohistoprepromorphisms</td>\n<td></td>"
+            htmlAnyContain "tr" "<td><a href=\"/teams/2\">Haskell Bank</a>\n</td>\n<td>przembot</td>"
+            htmlAnyContain "tr" "<td><a href=\"/teams/1\">Monadic Warriors</a>\n</td>\n<td>zyla, buoto, KrzyStar</td>"
+            htmlAnyContain "tr" "<td><a href=\"/teams/3\">Zygohistoprepromorphisms</a>\n</td>\n<td></td>"
 
         it "should display create team link" $ do
             createUserAndLogin "jdoe" "lambdacard"
@@ -173,3 +173,18 @@ spec = withApp $ do
 
                 Just (Entity _ user) <- runDB $ selectFirst [UserId ==. userId] []
                 liftIO $ userTeam user `shouldBe` Just newTeamId
+
+    describe "teamView" $ do
+        context "when team has no game" $ it "should display only team name and members" $ do
+            runDB $ sequence $
+                [ makeTeamWithMembers 1 "Monadic Warriors" ["zyla", "buoto", "KrzyStar"]
+                , makeTeamWithMembers 2 "Haskell Bank" ["przembot"]
+                ]
+
+            get $ TeamR $ toSqlKey 1
+            statusIs 200
+
+            htmlAllContain "title" "Team Monadic Warriors - Slavic Game Jam"
+
+            htmlAllContain "h2" "Team Monadic Warriors"
+            htmlAnyContain "p" "Members: zyla, buoto, KrzyStar"
