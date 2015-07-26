@@ -42,7 +42,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
         deriving Eq Show
 
     Game
-        title Text
+        title Text default ""
         screenshotUrl Text Maybe
         UniqueGameTitle title
         deriving Eq Show

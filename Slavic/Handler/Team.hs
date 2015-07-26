@@ -13,7 +13,7 @@ import Text.Blaze (text)
 
 makeTeamForm :: Html -> MForm Handler (FormResult Team, Widget)
 makeTeamForm = renderTable $ Team
-    <$> areq textField (mkFieldSettings "Team name" "name") Nothing
+    <$> areq textField (mkFieldSettings "Team name" "name") (Just "")
     <*> pure Nothing
 
 

@@ -17,6 +17,7 @@ library
                      , Slavic.Handler.Login
                      , Slavic.Handler.Team
                      , Slavic.Handler.Util
+                     , Slavic.Handler.Vote
                      , Slavic.Model
                      , Slavic.Model.Category
                      , Slavic.Model.User

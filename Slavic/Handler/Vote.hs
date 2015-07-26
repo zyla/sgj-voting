@@ -14,8 +14,8 @@ getVoteR = withAuthUser $ \(Entity _ authUser) -> do
     case userTeam authUser of
         Nothing -> redirect RootR
         Just team -> do
-            bucket <- runSqlMEither $ getTeamBucket team
-            games <- runDB $ getGamesFromBucket $ entityKey bucket
+            Entity bucketId bucket <- runSqlMEither $ getTeamBucket team
+            games <- runDB $ getGamesFromBucket bucketId
             currentTeam <- case userTeam authUser of
                 Nothing -> return Nothing
                 Just teamId -> runDB $ fmap (Entity teamId) <$> get teamId

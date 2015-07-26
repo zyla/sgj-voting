@@ -37,8 +37,8 @@ getGamesFromBucket :: VotingBucketId -> SqlM [TeamWithGame]
 getGamesFromBucket bucket = fmap project <$> rawSql [r|
         SELECT team.id, team.name, team.game
         FROM team
-        INNER JOIN voting_bucket vb ON team.id = vb.team
-        WHERE vb.id = ?
+        INNER JOIN voting_bucket_team vbt ON team.id = vbt.team
+        WHERE vbt.bucket = ?
     |] [toPersistValue bucket]
   where
     project (Single teamId, Single teamName, Single game) =
