@@ -96,6 +96,7 @@ postJoinTeamR teamId = withAuthUser $ \(Entity userId user) -> do
 
 getTeamR :: TeamId -> Handler Html
 getTeamR teamId = do
+    Entity _ _user <- requireAuth
     team <- fromMaybeOrNotFound =<< runDB (get teamId)
     members <- runDB $ selectList [UserTeam ==. Just teamId] [Asc UserId]
     maybeGame <- runDB $ map join $ traverse get $ teamGame team

@@ -1,4 +1,7 @@
-module Slavic.Foundation where
+module Slavic.Foundation (
+    module Slavic.Foundation
+  , requireAuth
+) where
 
 import ClassyPrelude
 import Yesod
@@ -34,6 +37,8 @@ instance Yesod App where
         maybeAuthUser <- getAuthUser
         pc <- widgetToPageContent widget
         withUrlRenderer $(hamletFile "templates/main.hamlet")
+
+    authRoute _ = Just LoginR
 
 instance YesodPersist App where
     type YesodPersistBackend App = SqlBackend

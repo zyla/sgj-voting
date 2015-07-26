@@ -177,7 +177,14 @@ spec = withApp $ do
             htmlAllContain "h2" "Team Monadic Warriors"
             htmlAnyContain "p" "Members: zyla, buoto, KrzyStar"
 
+        context "when user is not logged in" $ it "should redirect to login" $ do
+            addTestTeams
+            get $ TeamR $ toSqlKey 1
+            statusIs 303
+            assertHeader "Location" "/login"
+
         context "when team has no game" $ it "should display only team name and members" $ do
+            createUserAndLogin "jdoe" "lambdacard"
             addTestTeams
 
             get $ TeamR $ toSqlKey 1
@@ -186,6 +193,7 @@ spec = withApp $ do
             assertTestTeamDisplayed
 
         context "when team has game" $ it "should display game name" $ do
+            createUserAndLogin "jdoe" "lambdacard"
             addTestTeams
             let teamId = toSqlKey 1
 
