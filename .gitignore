@@ -13,3 +13,6 @@ client_session_key.aes
 # ctags
 tags
 codex.tags
+
+# stack
+.stack-work/
