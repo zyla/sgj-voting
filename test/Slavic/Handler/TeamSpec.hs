@@ -116,17 +116,6 @@ spec = withApp $ do
                 liftIO $ userTeam user `shouldBe` Nothing
 
     describe "root handler" $ context "when user is logged in" $ do
-        it "should display teams with members" $ do
-            createUserAndLogin "jdoe" "lambdacard"
-
-            teams <- addTestTeams
-            get RootR
-            statusIs 200
-
-            htmlAnyContain "tr" "<td><a href=\"/teams/2\">Haskell Bank</a>\n</td>\n<td>przembot</td>"
-            htmlAnyContain "tr" "<td><a href=\"/teams/1\">Monadic Warriors</a>\n</td>\n<td>zyla, buoto, KrzyStar</td>"
-            htmlAnyContain "tr" "<td><a href=\"/teams/3\">Zygohistoprepromorphisms</a>\n</td>\n<td></td>"
-
         it "should display create team link" $ do
             createUserAndLogin "jdoe" "lambdacard"
 
