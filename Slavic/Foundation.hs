@@ -54,7 +54,7 @@ instance YesodAuth App where
 
     authPlugins _ = []
 
-    authHttpManager _ = error "This app doesn't neet HTTP manager"
+    authHttpManager _ = error "This app doesn't need HTTP manager"
 
     getAuthId = return . Just . credsIdent
 
