@@ -31,10 +31,13 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 
     Team
         name Text
-        game Game Maybe
+        game GameId Maybe sql=game_id
         UniqueTeamName name
 
         gameTitle Text Maybe MigrationOnly
+
+        -- Kept for safer migration
+        oldGame Game Maybe MigrationOnly sql=game
 
         deriving Show
         deriving Eq
