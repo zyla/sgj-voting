@@ -3,7 +3,7 @@ module Slavic.Handler.TeamSpec (spec) where
 import TestImport
 import Slavic.Handler.Team
 import Slavic.Model hiding (get)
-import Slavic.Model.User (makeUser)
+import Slavic.Model.User (makeUser, makePassword)
 
 import qualified Database.Persist.Sql as Persist
 
@@ -20,7 +20,8 @@ makeTeamWithMembers id name members = do
 
     forM_ members $ \nick -> do
         tokenId <- insert $ Token nick
-        insert_ $ User tokenId nick "" nick nick nick (Just teamId)
+        pass <- liftIO $ makePassword nick
+        insert_ $ User tokenId nick pass nick nick nick (Just teamId)
 
     return entity
 
@@ -30,6 +31,7 @@ addTestTeams = runDB $ sequence
     , makeTeamWithMembers 3 "Zygohistoprepromorphisms" []
     ]
 
+monadicWarriorsId = toSqlKey 1
 
 spec :: Spec
 spec = withApp $ do
@@ -179,15 +181,13 @@ spec = withApp $ do
 
         context "when user is not logged in" $ it "should redirect to login" $ do
             addTestTeams
-            get $ TeamR $ toSqlKey 1
-            statusIs 303
-            assertHeader "Location" "/login"
+            assertRedirectsToLogin $ TeamR $ toSqlKey 1
 
         context "when team has no game" $ it "should display only team name and members" $ do
             createUserAndLogin "jdoe" "lambdacard"
             addTestTeams
 
-            get $ TeamR $ toSqlKey 1
+            get $ TeamR monadicWarriorsId
             statusIs 200
 
             assertTestTeamDisplayed
@@ -195,13 +195,79 @@ spec = withApp $ do
         context "when team has game" $ it "should display game name" $ do
             createUserAndLogin "jdoe" "lambdacard"
             addTestTeams
-            let teamId = toSqlKey 1
 
-            runDB $ do
-                update teamId [TeamGame =. Just (Game "Cool game")]
+            runDB $ update monadicWarriorsId [TeamGame =. Just (Game "Cool game")]
 
-            get $ TeamR teamId
+            get $ TeamR monadicWarriorsId
             statusIs 200
             assertTestTeamDisplayed
 
             htmlAnyContain "p" "Game: Cool game"
+
+        context "when user views other team" $ it "should not display edit button" $ do
+            addTestTeams
+            createUserAndLogin "jdoe" "lambdacard"
+            get $ TeamR monadicWarriorsId
+            statusIs 200
+
+            htmlNoneContain "a" "Edit game information"
+
+        context "when user views his team" $ it "should display edit button" $ do
+            addTestTeams
+            loginWith "zyla" "zyla"
+            get $ TeamR monadicWarriorsId
+            statusIs 200
+
+            htmlAnyContain "a[href=/edit_game]" "Edit game information"
+
+    describe "editGame" $ do
+        context "when user is not logged in" $ it "should redirect to login" $ do
+            addTestTeams
+            assertRedirectsToLogin EditGameR
+
+        context "when user has no team" $ it "should redirect to root" $ do
+            createUserAndLogin "jdoe" "lambdacard"
+
+            get EditGameR
+            statusIs 303
+            assertHeader "Location" "/"
+
+        it "should display form" $ do
+            addTestTeams
+            loginWith "zyla" "zyla"
+
+            get EditGameR
+            statusIs 200
+            htmlAllContain "title" "Edit game information - SGJ"
+            htmlCount "input[type=text][name=title]" 1
+            htmlCount "input[type=submit][value=Save]" 1
+
+        context "when team has game" $ it "should display form with filled values" $ do
+            addTestTeams
+            loginWith "zyla" "zyla"
+
+            runDB $ update monadicWarriorsId [TeamGame =. Just (Game "Cool game")]
+
+            get EditGameR
+            statusIs 200
+
+            htmlAllContain "title" "Edit game information - SGJ"
+            htmlCount "input[type=text][name=title][value=Cool game]" 1
+            htmlCount "input[type=submit][value=Save]" 1
+
+        it "should update game" $ do
+            addTestTeams
+            loginWith "zyla" "zyla"
+
+            get EditGameR
+
+            request $ do
+               setMethod "POST"
+               setUrl EditGameR
+               addCSRFToken
+               addPostParam "title" "test game"
+            statusIs 303
+            assertHeader "Location" "/teams/1"
+
+            team <- runDB $ Persist.get monadicWarriorsId
+            liftIO $ (team >>= teamGame) `shouldBe` Just (Game "test game")

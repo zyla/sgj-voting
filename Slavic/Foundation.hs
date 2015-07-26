@@ -28,6 +28,7 @@ mkYesodData "App" [parseRoutes|
     /leave-team LeaveTeamR GET POST
     /teams/#TeamId/join JoinTeamR POST
     /teams/#TeamId TeamR GET
+    /edit_game EditGameR GET POST
 |]
 
 staticFiles "static"

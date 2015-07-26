@@ -90,3 +90,8 @@ createUserAndLogin login password = do
     loginWith login password
     statusIs 303
     return user
+
+assertRedirectsToLogin route = do
+    get route
+    statusIs 303
+    assertHeader "Location" "/login"

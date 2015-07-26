@@ -1,3 +1,4 @@
+{-# LANGUAGE TupleSections #-}
 module Slavic.Handler.Team where
 
 import ClassyPrelude.Slavic
@@ -96,10 +97,11 @@ postJoinTeamR teamId = withAuthUser $ \(Entity userId user) -> do
 
 getTeamR :: TeamId -> Handler Html
 getTeamR teamId = do
-    Entity _ _user <- requireAuth
+    Entity _ user <- requireAuth
     team <- fromMaybeOrNotFound =<< runDB (get teamId)
     members <- runDB $ selectList [UserTeam ==. Just teamId] [Asc UserId]
     let maybeGame = teamGame team
+    let ownTeam = userTeam user == Just teamId
     defaultLayout $ do
         setTitle $ "Team " ++ text (teamName team) ++ " - Slavic Game Jam"
         $(whamletFile "templates/team.hamlet")
@@ -107,3 +109,41 @@ getTeamR teamId = do
 fromMaybeOrNotFound :: Maybe a -> Handler a
 fromMaybeOrNotFound Nothing = notFound
 fromMaybeOrNotFound (Just a) = pure a
+
+requireUserWithTeam :: Handler (Entity User, Entity Team)
+requireUserWithTeam = do
+    user <- requireAuth
+    team <- runDB $ map join $ traverse getEntity $ userTeam $ entityVal user
+    maybe (redirect RootR) (return . (user,)) team
+  where
+    getEntity key = map (Entity key) <$> get key
+
+getEditGameR :: Handler Html
+getEditGameR = do
+    (_, Entity _ team) <- requireUserWithTeam
+    (widget, enctype) <- generateFormPost (editGameForm $ teamGame team)
+    displayEditGameForm widget enctype
+
+postEditGameR :: Handler Html
+postEditGameR = do
+    (_, Entity teamId team) <- requireUserWithTeam
+    ((result, widget), enctype) <- runFormPost (editGameForm $ teamGame team)
+    case result of
+        FormSuccess game -> do
+            runDB $ update teamId [TeamGame =. Just game]
+            redirect $ TeamR teamId
+        _ -> displayAddTeamForm widget enctype
+
+displayEditGameForm :: Widget -> Enctype -> Handler Html
+displayEditGameForm widget enctype =
+    defaultLayout $ do
+        setTitle "Edit game information - SGJ"
+        [whamlet|
+            <form method=post enctype=#{enctype}>
+                <table>^{widget}
+                <input type=submit value="Save">
+            |]
+
+editGameForm :: Maybe Game -> Html -> MForm Handler (FormResult Game, Widget)
+editGameForm game = renderTable $ Game
+    <$> areq textField (mkFieldSettings "Game title" "title") (gameTitle <$> game)
